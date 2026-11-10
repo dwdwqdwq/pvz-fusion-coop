@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>PvZCoop</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>12.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+  <Target Name="RequireGame" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(GameDir)/GameAssembly.dll')" Text="Pass -p:GameDir=PATH to your installed Fusion 4.1 game with BepInEx IL2CPP." />
+    <Error Condition="!Exists('$(GameDir)/BepInEx/interop/Assembly-CSharp.dll')" Text="Run the BepInEx-equipped game once to generate its interop assemblies." />
+    <Error Condition="!Exists('$(GameDir)/BepInEx/plugins/PvZCoop/Steamworks.NET.dll')" Text="Steamworks.NET.dll is required in BepInEx/plugins/PvZCoop/. See README.md." />
+  </Target>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets/MenuUkrainian.png" LogicalName="CoopUI.MenuUkrainian.png" />
+    <EmbeddedResource Include="Assets/PvZUkrainian.ttf" LogicalName="CoopUI.UkrainianFont.ttf" />
+    <EmbeddedResource Include="Assets/plant-names.json" LogicalName="CoopUI.plant-names.json" />
+    <EmbeddedResource Include="Assets/uk.json" LogicalName="CoopUI.uk.json" />
+    <EmbeddedResource Include="Assets/TwoSeedBank.png" LogicalName="CoopUI.TwoSeedBank.png" />
+    <EmbeddedResource Include="Assets/SubPanel.png" LogicalName="CoopUI.SubPanel.png" />
+    <EmbeddedResource Include="Assets/board_selector_arrows_1.png" LogicalName="CoopUI.Arrow.png" />
+    <EmbeddedResource Include="Assets/SunCard.png" LogicalName="CoopUI.CardFrame.png" />
+    <EmbeddedResource Include="prices.json" LogicalName="prices.json" />
+    <Reference Include="$(GameDir)/BepInEx/core/*.dll" Exclude="$(GameDir)/BepInEx/core/dobby.dll"><Private>false</Private></Reference>
+    <Reference Include="$(GameDir)/BepInEx/interop/*.dll"><Private>false</Private></Reference>
+    <Reference Include="$(GameDir)/BepInEx/plugins/PvZCoop/Steamworks.NET.dll"><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,1911 @@
+{
+  "format": "pvz-prices",
+  "version": 2,
+  "plants": [],
+  "zombies": [
+    {
+      "id": 0,
+      "key": "NormalZombie",
+      "name": "Zombie",
+      "default": 50,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 1,
+      "key": "FlagZombie",
+      "name": "Flag zombie",
+      "default": 75,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 2,
+      "key": "ConeZombie",
+      "name": "Roadblock zombies",
+      "default": 75,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 3,
+      "key": "PolevaulterZombie",
+      "name": "Pole zombie",
+      "default": 100,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 4,
+      "key": "BucketZombie",
+      "name": "Iron barrel zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 5,
+      "key": "PaperZombie",
+      "name": "Newspaper reading zombie",
+      "default": 75,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 6,
+      "key": "DancePolZombie",
+      "name": "Dance king pole zombie",
+      "default": 400,
+      "defaultCd": 20,
+      "cd": 60
+    },
+    {
+      "id": 7,
+      "key": "DancePolZombie2",
+      "name": "Dance pole zombie",
+      "default": 75,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 8,
+      "key": "DoorZombie",
+      "name": "Iron gate zombie",
+      "default": 100,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 9,
+      "key": "FootballZombie",
+      "name": "Rugby zombies",
+      "default": 175,
+      "defaultCd": 8.75,
+      "cd": 26.5
+    },
+    {
+      "id": 10,
+      "key": "JacksonZombie",
+      "name": "Dance King Zombie",
+      "default": 600,
+      "defaultCd": 30,
+      "cd": 90
+    },
+    {
+      "id": 11,
+      "key": "ZombieDuck",
+      "name": "Duck lifebuoy zombie",
+      "default": 50,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 12,
+      "key": "ConeZombieDuck",
+      "name": "Duck lifebuoy roadblock zombie",
+      "default": 75,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 13,
+      "key": "BucketZombieDuck",
+      "name": "Duck lifebuoy iron bucket zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 14,
+      "key": "SubmarineZombie",
+      "name": "Mechanical dolphin zombie",
+      "default": 275,
+      "defaultCd": 13.75,
+      "cd": 41.5
+    },
+    {
+      "id": 15,
+      "key": "ElitePaperZombie",
+      "name": "Scholar Zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 16,
+      "key": "DriverZombie",
+      "name": "Sleigh zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 17,
+      "key": "SnorkleZombie",
+      "name": "Diving Zombie",
+      "default": 100,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 18,
+      "key": "SuperDriver",
+      "name": "Sled ice car zombie",
+      "default": 225,
+      "defaultCd": 11.25,
+      "cd": 34
+    },
+    {
+      "id": 19,
+      "key": "Dolphinrider",
+      "name": "Dolphin Rider",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 20,
+      "key": "DrownZombie",
+      "name": "Trident zombie",
+      "default": 100,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 21,
+      "key": "DollDiamond",
+      "name": "Diamond Matryoshka Zombie",
+      "default": 225,
+      "defaultCd": 11.25,
+      "cd": 34
+    },
+    {
+      "id": 22,
+      "key": "DollGold",
+      "name": "Golden matryoshka zombie",
+      "default": 175,
+      "defaultCd": 8.75,
+      "cd": 26.5
+    },
+    {
+      "id": 23,
+      "key": "DollSilver",
+      "name": "Silver matryoshka zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 24,
+      "key": "JackboxZombie",
+      "name": "Doll Box Zombie",
+      "default": 150,
+      "defaultCd": 7.5,
+      "cd": 22.5
+    },
+    {
+      "id": 25,
+      "key": "BalloonZombie",
+      "name": "Balloon Zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 26,
+      "key": "KirovZombie",
+      "name": "Airship zombie",
+      "default": 500,
+      "defaultCd": 25,
+      "cd": 75
+    },
+    {
+      "id": 27,
+      "key": "SnowDolphinrider",
+      "name": "White whale knight",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 28,
+      "key": "MinerZombie",
+      "name": "Miner zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 29,
+      "key": "IronBalloonZombie",
+      "name": "Iron Bucket Nut Balloon Zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "price": 400,
+      "cd": 30
+    },
+    {
+      "id": 30,
+      "key": "SuperJackboxZombie",
+      "name": "Clown king zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 31,
+      "key": "CatapultZombie",
+      "name": "Shooting cart zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 32,
+      "key": "PogoZombie",
+      "name": "Jumping zombie",
+      "default": 100,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 33,
+      "key": "LadderZombie",
+      "name": "Escalator zombie",
+      "default": 150,
+      "defaultCd": 7.5,
+      "cd": 22.5
+    },
+    {
+      "id": 34,
+      "key": "SuperPogoZombie",
+      "name": "Melon jumping zombie",
+      "default": 150,
+      "defaultCd": 7.5,
+      "price": 500,
+      "cd": 22.5
+    },
+    {
+      "id": 35,
+      "key": "Gargantuar",
+      "name": "Giant zombie",
+      "default": 300,
+      "defaultCd": 15,
+      "cd": 45
+    },
+    {
+      "id": 36,
+      "key": "RedGargantuar",
+      "name": "Red eyed giant zombie",
+      "default": 450,
+      "defaultCd": 22.5,
+      "cd": 67.5
+    },
+    {
+      "id": 37,
+      "key": "ImpZombie",
+      "name": "Imp zombie",
+      "default": 50,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 38,
+      "key": "IronGargantuar",
+      "name": "Mechanical giant zombie",
+      "default": 250,
+      "defaultCd": 12.5,
+      "cd": 37.5
+    },
+    {
+      "id": 39,
+      "key": "IronRedGargantuar",
+      "name": "Red-eyed mechanical giant zombie",
+      "default": 350,
+      "defaultCd": 17.5,
+      "cd": 52.5
+    },
+    {
+      "id": 40,
+      "key": "MachineNutZombie",
+      "name": "Mechanical Bowling Zombie",
+      "default": 300,
+      "defaultCd": 15,
+      "cd": 45
+    },
+    {
+      "id": 41,
+      "key": "SilverZombie",
+      "name": "Silver statue",
+      "default": 25,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 42,
+      "key": "GoldZombie",
+      "name": "Gold statue",
+      "default": 50,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 43,
+      "key": "SuperGargantuar",
+      "name": "Armed giant zombie",
+      "default": 800,
+      "defaultCd": 40,
+      "cd": 120
+    },
+    {
+      "id": 44,
+      "key": "ZombieBoss",
+      "name": "Dr. Zombie King",
+      "default": 9999,
+      "defaultCd": 499.95,
+      "cd": 1500
+    },
+    {
+      "id": 45,
+      "key": "BungiZombie",
+      "name": "Bungee jumping zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 46,
+      "key": "ZombieBoss2",
+      "name": "Trophy Dr. Zombie King",
+      "default": 9999,
+      "defaultCd": 499.95,
+      "cd": 1500
+    },
+    {
+      "id": 47,
+      "key": "SnowZombie",
+      "name": "Yeti Zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 48,
+      "key": "NewYearZombie",
+      "name": "Nian beast zombie",
+      "default": 300,
+      "defaultCd": 15,
+      "cd": 45
+    },
+    {
+      "id": 49,
+      "key": "SnowGunZombie",
+      "name": "Snow Gun Zombie",
+      "default": 500,
+      "defaultCd": 25,
+      "cd": 75
+    },
+    {
+      "id": 50,
+      "key": "SnowShieldZombie",
+      "name": "Snow Shield Zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 51,
+      "key": "SnowDrownZombie",
+      "name": "Snowfork zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 52,
+      "key": "ProtalZombie",
+      "name": "Chrono Peashooter Zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "price": 500,
+      "cd": 30
+    },
+    {
+      "id": 53,
+      "key": "LevatationZombie",
+      "name": "Yeti UFO Zombie",
+      "default": 300,
+      "defaultCd": 15,
+      "cd": 45
+    },
+    {
+      "id": 54,
+      "key": "TrainingDummy",
+      "name": "Wooden pile zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 55,
+      "key": "SnowConeZombie",
+      "name": "Ice cube zombie",
+      "default": 75,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 56,
+      "key": "SnowMonsterZombie",
+      "name": "Snow beast",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 57,
+      "key": "SuperSnowMonsterZombie",
+      "name": "Snow Beast King",
+      "default": 300,
+      "defaultCd": 15,
+      "cd": 45
+    },
+    {
+      "id": 58,
+      "key": "PickaxeZombie",
+      "name": "Prospector Zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 59,
+      "key": "DolphinPaper",
+      "name": "Dolphin reading newspaper zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 60,
+      "key": "ProjectileZombie",
+      "name": "Thunder Cannonball",
+      "default": 500,
+      "defaultCd": 25,
+      "cd": 75
+    },
+    {
+      "id": 61,
+      "key": "FootballDolphin",
+      "name": "Dolphin Football Zombies",
+      "default": 175,
+      "defaultCd": 8.75,
+      "cd": 26.5
+    },
+    {
+      "id": 62,
+      "key": "MiniSnowMonster",
+      "name": "Little snow beast",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 63,
+      "key": "GoldBungiZombie",
+      "name": "Greedy bungee jumping zombie",
+      "default": 300,
+      "defaultCd": 15,
+      "cd": 45
+    },
+    {
+      "id": 64,
+      "key": "SandJackson",
+      "name": "Beach dance king zombie",
+      "default": 450,
+      "defaultCd": 22.5,
+      "cd": 67.5
+    },
+    {
+      "id": 65,
+      "key": "StoneDancer",
+      "name": "Dancing stone statues",
+      "default": 25,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 66,
+      "key": "FlagFootball",
+      "name": "Flag football captain",
+      "default": 225,
+      "defaultCd": 11.25,
+      "price": 750,
+      "cd": 34
+    },
+    {
+      "id": 67,
+      "key": "MiniSandMonster",
+      "name": "Little sand beast",
+      "default": 175,
+      "defaultCd": 8.75,
+      "cd": 26.5
+    },
+    {
+      "id": 68,
+      "key": "ChickenImp",
+      "name": "Chicken jockey",
+      "default": 175,
+      "defaultCd": 8.75,
+      "cd": 26.5
+    },
+    {
+      "id": 69,
+      "key": "HorseZombie",
+      "name": "Zombie horse rider",
+      "default": 200,
+      "defaultCd": 10,
+      "price": 500,
+      "cd": 30
+    },
+    {
+      "id": 70,
+      "key": "SuperHorse",
+      "name": "Captain of the Machine Gun Rugby Cavalry",
+      "default": 300,
+      "defaultCd": 15,
+      "price": 1000,
+      "cd": 45
+    },
+    {
+      "id": 71,
+      "key": "BoatImp",
+      "name": "Mechanical Chicken Imp Speed ​​Boat",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 72,
+      "key": "SuperLadderZombie",
+      "name": "Cursed Ladder Zombie",
+      "default": 175,
+      "defaultCd": 8.75,
+      "cd": 26.5
+    },
+    {
+      "id": 73,
+      "key": "EndoFlameZombie",
+      "name": "Zombie fire red lotus",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 74,
+      "key": "HypnoJalapenoZombie",
+      "name": "Charm Chili Zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 75,
+      "key": "HypnoJalapenoPickaxeZombie",
+      "name": "Charmed Pepper Miner Zombie",
+      "default": 225,
+      "defaultCd": 11.25,
+      "cd": 34
+    },
+    {
+      "id": 76,
+      "key": "DrownGargantuar",
+      "name": "Trident giant zombie",
+      "default": 300,
+      "defaultCd": 15,
+      "cd": 45
+    },
+    {
+      "id": 77,
+      "key": "SuperPolevaulter",
+      "name": "Champion Pole Zombie",
+      "default": 225,
+      "defaultCd": 11.25,
+      "cd": 34
+    },
+    {
+      "id": 78,
+      "key": "WhiteFootball",
+      "name": "Colorless Football Zombie",
+      "default": 275,
+      "defaultCd": 13.75,
+      "cd": 41.5
+    },
+    {
+      "id": 79,
+      "key": "YellowFootball",
+      "name": "Yellow football zombie",
+      "default": 225,
+      "defaultCd": 11.25,
+      "cd": 34
+    },
+    {
+      "id": 80,
+      "key": "PortalPolevaulter",
+      "name": "Chrono Zombie",
+      "default": 225,
+      "defaultCd": 11.25,
+      "cd": 34
+    },
+    {
+      "id": 81,
+      "key": "CoachPaper",
+      "name": "Pole Coach Zombie",
+      "default": 150,
+      "defaultCd": 7.5,
+      "cd": 22.5
+    },
+    {
+      "id": 82,
+      "key": "BucketPaper",
+      "name": "Iron Bucket Reading Zombie",
+      "default": 225,
+      "defaultCd": 11.25,
+      "cd": 34
+    },
+    {
+      "id": 83,
+      "key": "PenguinZombie",
+      "name": "Zombie penguin",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 84,
+      "key": "SnowNormalZombie",
+      "name": "Snow Zombie",
+      "default": 50,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 85,
+      "key": "SnowBucketZombie",
+      "name": "Blue ice zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 86,
+      "key": "SuperPenguinZombie",
+      "name": "Zombie Emperor Penguin",
+      "default": 300,
+      "defaultCd": 15,
+      "cd": 45
+    },
+    {
+      "id": 87,
+      "key": "IronConeZombie",
+      "name": "Compound Roadblock Zombie",
+      "default": 150,
+      "defaultCd": 7.5,
+      "cd": 22.5
+    },
+    {
+      "id": 88,
+      "key": "ElephantZombie",
+      "name": "Zombie giant elephant",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 89,
+      "key": "ZombieLoonNut",
+      "name": "Zombie bowling",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 90,
+      "key": "RedZombieLoonNut",
+      "name": "Red Eyed Zombie Bowling",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 91,
+      "key": "PolFootballZombie",
+      "name": "Pole Football Zombies",
+      "default": 275,
+      "defaultCd": 13.75,
+      "cd": 41.5
+    },
+    {
+      "id": 92,
+      "key": "LostMachine",
+      "name": "Lost mechanism",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 93,
+      "key": "LostMachineII",
+      "name": "Lost Mechanism-Shield Configuration",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 94,
+      "key": "LostMachineIII",
+      "name": "Lost Mechanism-Assault Type",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 95,
+      "key": "LostPenguin",
+      "name": "Lost Mechanism Penguin",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 96,
+      "key": "LostSnowMonster",
+      "name": "Lost Mechanism Snow Beast",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 97,
+      "key": "SnowCrab",
+      "name": "Snow crab",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 98,
+      "key": "SnowBirdZombie",
+      "name": "Angry snowbird",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 99,
+      "key": "LostMachineIV",
+      "name": "Lost Mechanism-Shooter Type",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 100,
+      "key": "PeaShooterZombie",
+      "name": "Peashooter Zombie",
+      "default": 75,
+      "defaultCd": 5,
+      "price": 100,
+      "cd": 15
+    },
+    {
+      "id": 101,
+      "key": "CherryShooterZombie",
+      "name": "Cherry shooter zombies",
+      "default": 100,
+      "defaultCd": 5,
+      "price": 200,
+      "cd": 15
+    },
+    {
+      "id": 102,
+      "key": "SuperCherryShooterZombie",
+      "name": "Super Cherry Shooter Zombie",
+      "default": 300,
+      "defaultCd": 15,
+      "cd": 45
+    },
+    {
+      "id": 103,
+      "key": "WallNutZombie",
+      "name": "Nut zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 104,
+      "key": "CherryPaperZombie",
+      "name": "Cherry Reading Zombie",
+      "default": 1000,
+      "defaultCd": 50,
+      "cd": 150
+    },
+    {
+      "id": 105,
+      "key": "RandomZombie",
+      "name": "Blind box zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 106,
+      "key": "BucketNutZombie",
+      "name": "Iron Bucket Nut Zombie",
+      "default": 150,
+      "defaultCd": 7.5,
+      "cd": 22.5
+    },
+    {
+      "id": 107,
+      "key": "CherryNutZombie",
+      "name": "Cherry Nut Zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "cd": 19
+    },
+    {
+      "id": 108,
+      "key": "IronPeaZombie",
+      "name": "Iron Bucket Pea Zombie",
+      "default": 175,
+      "defaultCd": 8.75,
+      "price": 350,
+      "cd": 26.5
+    },
+    {
+      "id": 109,
+      "key": "TallNutFootballZombie",
+      "name": "Olive Tall Nut Zombie",
+      "default": 250,
+      "defaultCd": 12.5,
+      "price": 500,
+      "cd": 37.5
+    },
+    {
+      "id": 110,
+      "key": "RandomPlusZombie",
+      "name": "Golden Blind Box Zombie",
+      "default": 300,
+      "defaultCd": 15,
+      "cd": 45
+    },
+    {
+      "id": 111,
+      "key": "TallIceNutZombie",
+      "name": "Ice tall nut zombie",
+      "default": 175,
+      "defaultCd": 8.75,
+      "cd": 26.5
+    },
+    {
+      "id": 112,
+      "key": "CherryCatapultZombie",
+      "name": "Explosive Shooting Cart Zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 113,
+      "key": "DolphinPeaZombie",
+      "name": "Pea Red Whale Rider",
+      "default": 125,
+      "defaultCd": 6.25,
+      "price": 250,
+      "cd": 19
+    },
+    {
+      "id": 114,
+      "key": "IronPeaDoorZombie",
+      "name": "Armed Iron Bucket Pea Zombie",
+      "default": 225,
+      "defaultCd": 11.25,
+      "price": 550,
+      "cd": 34
+    },
+    {
+      "id": 115,
+      "key": "SquashZombie",
+      "name": "Wo Gua Zombie",
+      "default": 100,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 116,
+      "key": "JalaSquashZombie",
+      "name": "Hot Wogua Zombie",
+      "default": 250,
+      "defaultCd": 12.5,
+      "cd": 37.5
+    },
+    {
+      "id": 117,
+      "key": "JalapenoZombie",
+      "name": "Chili Zombie",
+      "default": 100,
+      "defaultCd": 5,
+      "price": 200,
+      "cd": 15
+    },
+    {
+      "id": 118,
+      "key": "GatlingFootballZombie",
+      "name": "Machine Gun Football Zombies",
+      "default": 250,
+      "defaultCd": 12.5,
+      "price": 555,
+      "cd": 37.5
+    },
+    {
+      "id": 119,
+      "key": "IronBalloonZombie2",
+      "name": "Iron Bucket Pea Balloon Zombie",
+      "default": 225,
+      "defaultCd": 11.25,
+      "price": 550,
+      "cd": 34
+    },
+    {
+      "id": 120,
+      "key": "DoomZombie",
+      "name": "Destruction mushroom zombie",
+      "default": 125,
+      "defaultCd": 6.25,
+      "price": 250,
+      "cd": 19
+    },
+    {
+      "id": 121,
+      "key": "RandomGargantuar",
+      "name": "Blind box giant zombie",
+      "default": 500,
+      "defaultCd": 25,
+      "cd": 75
+    },
+    {
+      "id": 122,
+      "key": "BlueGargantuar",
+      "name": "Blue eyed giant zombie",
+      "default": 450,
+      "defaultCd": 22.5,
+      "cd": 67.5
+    },
+    {
+      "id": 123,
+      "key": "GreenGargantuar",
+      "name": "Green eyed giant zombie",
+      "default": 450,
+      "defaultCd": 22.5,
+      "cd": 67.5
+    },
+    {
+      "id": 124,
+      "key": "YellowGargantuar",
+      "name": "Yellow eyed giant zombie",
+      "default": 450,
+      "defaultCd": 22.5,
+      "cd": 67.5
+    },
+    {
+      "id": 125,
+      "key": "Zombie9527",
+      "name": "Parkour zombies",
+      "default": 600,
+      "defaultCd": 30,
+      "cd": 90
+    },
+    {
+      "id": 126,
+      "key": "TallFireNutZombie",
+      "name": "Flame Tall Nut Zombie",
+      "default": 225,
+      "defaultCd": 11.25,
+      "cd": 34
+    },
+    {
+      "id": 127,
+      "key": "ObsidianTallNutZombie",
+      "name": "Obsidian Tall Nut Zombie",
+      "default": 400,
+      "defaultCd": 20,
+      "cd": 60
+    },
+    {
+      "id": 128,
+      "key": "SunNutZombie",
+      "name": "Sun Nut Zombie",
+      "default": 75,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 129,
+      "key": "SuperSunNutZombie",
+      "name": "Sunshine Emperor Fruit Zombie",
+      "default": 25,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 130,
+      "key": "GatlingPeaZombie",
+      "name": "Machine Gun Shooter Zombie",
+      "default": 150,
+      "defaultCd": 7.5,
+      "cd": 22.5
+    },
+    {
+      "id": 131,
+      "key": "SnowGatlingPeaZombie",
+      "name": "Ice Machine Gun Shooter Zombie",
+      "default": 200,
+      "defaultCd": 10,
+      "cd": 30
+    },
+    {
+      "id": 132,
+      "key": "BedRockSnowZombie",
+      "name": "Immortal tall nut snowman zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 133,
+      "key": "SqualourZombie",
+      "name": "Cat melon zombie",
+      "default": 250,
+      "defaultCd": 12.5,
+      "cd": 37.5
+    },
+    {
+      "id": 200,
+      "key": "SuperSubmarine",
+      "name": "Super Mechanical Dolphin Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 201,
+      "key": "JacksonDriver",
+      "name": "Dance King Ice Car Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 202,
+      "key": "FootballDrown",
+      "name": "Super Trident Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 203,
+      "key": "CherryPaperZ95",
+      "name": "Cherry machine gun reading newspaper zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 204,
+      "key": "BlackFootball",
+      "name": "Black Olive Tall Nut Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 205,
+      "key": "SuperKirov",
+      "name": "Kirov airship zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 206,
+      "key": "SuperBombThrower",
+      "name": "Mini Kirov",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 207,
+      "key": "QuickJacksonZombie",
+      "name": "Dance King Commander",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 208,
+      "key": "QingZombie",
+      "name": "Millennium Corpse King",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 209,
+      "key": "JackboxJumpZombie",
+      "name": "Clown jumping king",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 210,
+      "key": "SuperMachineNutZombie",
+      "name": "Super mechanical bowling ball",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 211,
+      "key": "LandSubmarine",
+      "name": "Ground fish",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 212,
+      "key": "UltimateGargantuar",
+      "name": "Ultimate Obsidian Giant",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 213,
+      "key": "ObsidianImpZombie",
+      "name": "Obsidian imp zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 214,
+      "key": "DolphinGatlingZombie",
+      "name": "Cherry Machine Gun Red Whale Rider",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 215,
+      "key": "DiamondRandomZombie",
+      "name": "Diamond Blind Box Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 216,
+      "key": "DrownpultZombie",
+      "name": "Trident rush car",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 217,
+      "key": "SuperDancePolZombie",
+      "name": "White Pole Dance King",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 218,
+      "key": "UltimateFootballDrown",
+      "name": "Ultimate Abyssal Trident",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 219,
+      "key": "UltimateMachineNutZombie",
+      "name": "Ultimate Mechanical Bowling",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 220,
+      "key": "UltimateFootballZombie",
+      "name": "Ultimate Black Olive General",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 221,
+      "key": "UltimateKirovZombie",
+      "name": "The ultimate fish-type sky-breaking mecha",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 222,
+      "key": "UltimateJacksonDriver",
+      "name": "The ultimate stage tour vehicle",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 223,
+      "key": "UltimatePaperZombie",
+      "name": "Ultimate Professor Z",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 224,
+      "key": "UltimateJackboxZombie",
+      "name": "Ultimate Doll Box Queen",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 225,
+      "key": "GatlingBlackFootball",
+      "name": "Machine Gun Black Olive Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 226,
+      "key": "LegionZombie",
+      "name": "Apprentice Alpha Team",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 227,
+      "key": "IceClawZombie",
+      "name": "Ice Claw Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 228,
+      "key": "UltimateSnowZombie",
+      "name": "Ultimate Snow Queen",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 229,
+      "key": "UltimateHorse",
+      "name": "The Ultimate Black Olive Marshal",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 230,
+      "key": "UltimateHorse2",
+      "name": "Machine gun black olive handsome",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 231,
+      "key": "HorseBoss",
+      "name": "Black Olive Commander",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 232,
+      "key": "SummonedHorse",
+      "name": "Ghost Rider",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 233,
+      "key": "ArmedGargantuar",
+      "name": "Special armed giant",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 234,
+      "key": "UltimateImpKing",
+      "name": "Ultimate Imp King",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 235,
+      "key": "ImpKing",
+      "name": "Imp King Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 236,
+      "key": "SuperLevatation",
+      "name": "Laser UFO Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 237,
+      "key": "CherrySubmarine",
+      "name": "Cherry whale heavy boat",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 238,
+      "key": "SnowMonsterRider",
+      "name": "Snow Beast Knight Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 239,
+      "key": "WaterJackboxJumpZombie",
+      "name": "Clown Demo King",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 240,
+      "key": "UltiWaterGargantuar",
+      "name": "Fortress trident giant",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 241,
+      "key": "UltimateGoldGargantuar",
+      "name": "Special golden giant",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 242,
+      "key": "DoomPaper",
+      "name": "Destroy Machine Gun Reading Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 243,
+      "key": "UltimateLegionZombie",
+      "name": "Ultimate alpha team",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 244,
+      "key": "UltimateSwordZombie",
+      "name": "The ultimate immortality",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 245,
+      "key": "MachineLevatation",
+      "name": "Special mechanical flying saucer",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 246,
+      "key": "LegionSniperZombie",
+      "name": "Alpha sniper",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 247,
+      "key": "VoodooDollZombie",
+      "name": "VoodooDollZombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 248,
+      "key": "ObsidianClawZombie",
+      "name": "Obsidian Snowclaw Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 249,
+      "key": "UltimateDolphin",
+      "name": "Ultimate Ancient Whale Knight",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 250,
+      "key": "PortalBalloonZombie",
+      "name": "Timeout Air Balloon Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 251,
+      "key": "BlackHorse",
+      "name": "Black olive trooper zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 252,
+      "key": "SuperBlackHorse",
+      "name": "Machine Gun Black Olive Cavalry Commander",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 253,
+      "key": "BlackJackboxZombie",
+      "name": "Black cloak king",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 254,
+      "key": "BlackElephantZombie",
+      "name": "Black olive giant elephant",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 255,
+      "key": "BlackTrainZombie",
+      "name": "Machine gun black olive troop vehicle",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 256,
+      "key": "BlackFlagFootball",
+      "name": "Flag black olive warrior",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 257,
+      "key": "SuperBlackFootball",
+      "name": "Black Olive Tall Nut Samurai Leader",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 258,
+      "key": "ArmoredImpZombie",
+      "name": "Special armed imp",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 259,
+      "key": "UltimateEndoflameZombie",
+      "name": "Ultimate Zombie Fire Red Lotus",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 260,
+      "key": "FootballBoss",
+      "name": "General Black Olive",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 261,
+      "key": "JacksonDriverBoss",
+      "name": "Stage tour vehicle",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 262,
+      "key": "SnowFootballDrown",
+      "name": "Frozen Trident Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 300,
+      "key": "GatlingPaper_a",
+      "name": "Cherry Gun Scholar Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 301,
+      "key": "GatlingPaper_b",
+      "name": "Cherry Machine Gun Bachelor Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 302,
+      "key": "GatlingPaper_c",
+      "name": "Cherry Gun Master Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 303,
+      "key": "BlackFootball_a",
+      "name": "Black olive zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 304,
+      "key": "BlackFootball_b",
+      "name": "Black olive captain",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 305,
+      "key": "BlackFootball_c",
+      "name": "Black olive lieutenant",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 306,
+      "key": "BlackFootball_c2",
+      "name": "Black Olive Machine Gun Lieutenant",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 307,
+      "key": "Jackson_a",
+      "name": "White Dancer Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 308,
+      "key": "Jackson_b",
+      "name": "Commander of the Dance King in White",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 309,
+      "key": "Jackson_c",
+      "name": "Touring Dance Commander",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 310,
+      "key": "Submarine_a",
+      "name": "Mechanical ship zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 311,
+      "key": "Submarine_b",
+      "name": "Missile Mechanical Ship Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 312,
+      "key": "Submarine_b2",
+      "name": "Assault Mechanical Ship Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 313,
+      "key": "Submarine_c",
+      "name": "Thunder Mechanical Submarine Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 314,
+      "key": "Submarine_c2",
+      "name": "Thunder assault ship zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 315,
+      "key": "Drown_a",
+      "name": "Olive Trident Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 316,
+      "key": "Drown_b",
+      "name": "Bihai Trident Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 317,
+      "key": "Drown_c",
+      "name": "Deep sea trident general",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 318,
+      "key": "Pickaxe_a",
+      "name": "Netherite pickaxe zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 319,
+      "key": "Pickaxe_b",
+      "name": "Netherite diamond zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 320,
+      "key": "Pickaxe_c",
+      "name": "Armed Netherite Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 321,
+      "key": "Driver_a",
+      "name": "Dancing Chariot Zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 322,
+      "key": "Driver_b",
+      "name": "Lightly armored dancing chariot zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 323,
+      "key": "Driver_c",
+      "name": "Heavy armored dancing chariot zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 324,
+      "key": "Jackbox_a",
+      "name": "Doll box jumping zombie",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 325,
+      "key": "Jackbox_b",
+      "name": "Doll box jumping king",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 326,
+      "key": "Jackbox_c",
+      "name": "Horror Doll Box Jumping King",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 327,
+      "key": "Kirov_a",
+      "name": "Kirov bombing airship",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 328,
+      "key": "Kirov_b",
+      "name": "Kirov mothership airship",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 329,
+      "key": "Kirov_c",
+      "name": "Air pilot airship",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 330,
+      "key": "EternalZombie_a",
+      "name": "Hundreds of years of hairy stiffness",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 331,
+      "key": "EternalZombie_b",
+      "name": "Thousand years of flying zombies",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 332,
+      "key": "EternalZombie_c",
+      "name": "Ten Thousand Years Corpse Emperor",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 333,
+      "key": "Drownpult_a",
+      "name": "Lightly equipped Trident rush car",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 334,
+      "key": "Drownpult_b",
+      "name": "Reloaded Trident Rushing Car",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 335,
+      "key": "Drownpult_c",
+      "name": "Sacrificing a Trident to Charge a Car",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 336,
+      "key": "ElephantZombie_a",
+      "name": "Black olive war elephant",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 337,
+      "key": "ElephantZombie_b",
+      "name": "Black olive armed war elephant",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    },
+    {
+      "id": 338,
+      "key": "ElephantZombie_c",
+      "name": "Black Olive Heavy War Elephant",
+      "default": 0,
+      "defaultCd": 5,
+      "cd": 15
+    }
+  ]
+}

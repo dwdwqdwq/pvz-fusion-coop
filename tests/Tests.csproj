@@ -1,0 +1,1 @@
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net8.0</TargetFramework><OutputType>Exe</OutputType></PropertyGroup><ItemGroup><Compile Include="../src/PvZCoop/LanTransport.cs" Link="LanTransport.cs"/><Compile Include="../src/PvZCoop/LanguageChoice.cs" Link="LanguageChoice.cs"/></ItemGroup></Project>
