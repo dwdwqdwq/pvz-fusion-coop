@@ -2,7 +2,7 @@
 
 Two-player LAN co-op for **PvZ Fusion 4.1 (Windows, IL2CPP)**. Defend the same lawn in the normal campaign.
 
-[Download the mod](https://github.com/dwdwqdwq/pvz-fusion-coop/releases/latest/download/PvZ-Fusion-Coop-0.11.0.zip) · [Українською](README.uk.md)
+[Ready-to-play GAME + CO-OP](https://github.com/dwdwqdwq/pvz-fusion-coop/releases/latest/download/PvZ-Fusion-4.1-with-Coop-Mod-v0.11.0.zip) · [MOD ONLY — if you already have the game](https://github.com/dwdwqdwq/pvz-fusion-coop/releases/latest/download/PvZ-Fusion-Coop-0.11.0.zip) · [Українською](README.uk.md)
 
 ## Features
 
@@ -16,9 +16,15 @@ Two-player LAN co-op for **PvZ Fusion 4.1 (Windows, IL2CPP)**. Defend the same l
 
 ## Install
 
-This is a mod, not a full game download. Use an existing compatible **Fusion 4.1 with BepInEx IL2CPP**. Run it once so BepInEx generates `interop` files.
+### Ready-to-play game + co-op
 
-Close the game, extract the release ZIP into its folder, then launch the game normally. The archive places `PvZCoop.dll` and the required managed `Steamworks.NET.dll` in `BepInEx/plugins/PvZCoop/`. It contains no game executable, Unity runtime, game data, saves, or BepInEx loader.
+Download the **ready-to-play GAME + CO-OP** archive, fully extract it, and open **Start Co-op.cmd**. Fusion GAME 4.1, the loader, and CO-OP MOD v0.11.0 are already included. No separate game installation is needed.
+
+### Mod only — for an existing game
+
+For the smaller **MOD ONLY** archive, use an existing compatible **Fusion 4.1 with BepInEx IL2CPP**. Run it once so BepInEx generates `interop` files.
+
+Close the game, extract the release ZIP into its folder, then launch the game normally. The archive places `PvZCoop.dll` and the required managed `Steamworks.NET.dll` in `BepInEx/plugins/PvZCoop/`. The mod-only archive contains no game executable, Unity runtime, game data, saves, or BepInEx loader.
 
 Both players should install the same release. Languages may differ between players. Existing co-op 0.10.2 uses the same LAN protocol; a matching public release on both PCs is recommended.
 
