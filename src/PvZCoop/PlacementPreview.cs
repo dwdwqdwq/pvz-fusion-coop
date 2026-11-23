@@ -1,43 +1,31 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 namespace PvZCoop;
-
-// Visual placement intent only. No plants, colliders or game actions are created.
 public static class PlacementPreview
 {
-    static Image tile, icon;
-    static RectTransform friendArt;
-    static int friendArtType=int.MinValue;
-    static Image[] friendArrows, ownArrows;
-    static TextMeshProUGUI label;
-    static float nextSend,lastSend,expires,nextArtLookup;
-    static string last="0",spriteName="";
-    static int column,row,plant;
-    static bool remote,exact;
-    static Vector2 worldCenter,worldSize;
-    static Sprite cachedArt;
-    static readonly CultureInfo Inv=CultureInfo.InvariantCulture;
-    public static void Init(){Party.OnMessage+=Receive;}
-    public static void Reset(){remote=false;last="0";expires=nextSend=lastSend=0;HideRemote();HideArrows(ownArrows);if(friendArt!=null){UnityEngine.Object.Destroy(friendArt.gameObject);friendArt=null;}friendArtType=int.MinValue;}
-    static void HideArrows(Image[] list){if(list!=null)foreach(var a in list)Ui.Show(a,false);}
-    static void HideRemote(){HideArrows(friendArrows);Ui.Show(icon,false);Ui.Show(label,false);Ui.Show(friendArt,false);}
-    static void Receive(string type,string payload)
-    {
-        if(type=="sp"){remote=false;return;}
-        if(type!="preview"||!Sync.Running)return;
-        if(payload=="0"){remote=false;return;}
-        var p=payload.Split('|');
-        if((p.Length!=4&&p.Length!=8)||!int.TryParse(p[0],out int c)||!int.TryParse(p[1],out int r)||!int.TryParse(p[2],out int t)||c<0||c>63||r<0||r>31||p[3].Length>1024)return;
-        string name;try{name=Encoding.UTF8.GetString(Convert.FromBase64String(p[3]));}catch(FormatException){return;}
-        if(plant!=t||spriteName!=name){cachedArt=null;nextArtLookup=0;}
-        exact=false;
-        if(p.Length==8&&float.TryParse(p[4],NumberStyles.Float,Inv,out float x)&&float.TryParse(p[5],NumberStyles.Float,Inv,out float y)&&float.TryParse(p[6],NumberStyles.Float,Inv,out float w)&&float.TryParse(p[7],NumberStyles.Float,Inv,out float h)&&float.IsFinite(x)&&float.IsFinite(y)&&w>0&&h>0&&w<20&&h<20){exact=true;worldCenter=new Vector2(x,y);worldSize=new Vector2(w,h);}
-        column=c;row=r;plant=t;spriteName=name;remote=true;expires=Time.unscaledTime+1.5f;
-    }
+ sealed class Remote { public int Id,Column,Row,Plant,ArtType=int.MinValue,ArtRevision=-1;public string SpriteName="";public bool Active,Exact;public float Expires,NextLookup;public Vector2 Center,Size;public Sprite Cached;public Image Icon;public Image[] Arrows;public RectTransform Art;public TMP_Text Label; }
+ static readonly Dictionary<int,Remote> remotes=new();
+ static Image[] ownArrows;static float nextSend,lastSend;static string last="0";
+ static readonly CultureInfo Inv=CultureInfo.InvariantCulture;
+ public static void Init(){Party.OnMessage+=Receive;}
+ static void HideArrows(Image[] list){if(list!=null)foreach(var a in list)Ui.Show(a,false);}
+ static void Hide(Remote v){HideArrows(v.Arrows);Ui.Show(v.Icon,false);Ui.Show(v.Label,false);Ui.Show(v.Art,false);}
+ public static void Reset(){foreach(var v in remotes.Values){if(v.Arrows!=null)foreach(var a in v.Arrows)UnityEngine.Object.Destroy(a.gameObject);if(v.Icon!=null)UnityEngine.Object.Destroy(v.Icon.gameObject);if(v.Art!=null)UnityEngine.Object.Destroy(v.Art.gameObject);if(v.Label!=null)UnityEngine.Object.Destroy(v.Label.gameObject);}remotes.Clear();last="0";nextSend=lastSend=0;HideArrows(ownArrows);}
+ static void Receive(string type,string payload){
+  int id=Party.SenderId;if(id<=0||id==Party.PlayerId)return;
+  if(!remotes.TryGetValue(id,out var v)){v=new Remote{Id=id};remotes[id]=v;}
+  if(type=="sp"){v.Active=false;return;}if(type!="preview"||!Sync.Running)return;if(payload=="0"){v.Active=false;return;}
+  var p=payload.Split('|');if((p.Length!=4&&p.Length!=8)||!int.TryParse(p[0],out int c)||!int.TryParse(p[1],out int r)||!int.TryParse(p[2],out int t)||c<0||c>63||r<0||r>31||p[3].Length>1024)return;
+  string name;try{name=Encoding.UTF8.GetString(Convert.FromBase64String(p[3]));}catch(FormatException){return;}
+  if(v.Plant!=t||v.SpriteName!=name){v.Cached=null;v.NextLookup=0;}v.Exact=false;
+  if(p.Length==8&&float.TryParse(p[4],NumberStyles.Float,Inv,out float x)&&float.TryParse(p[5],NumberStyles.Float,Inv,out float y)&&float.TryParse(p[6],NumberStyles.Float,Inv,out float w)&&float.TryParse(p[7],NumberStyles.Float,Inv,out float h)&&float.IsFinite(x)&&float.IsFinite(y)&&w>0&&h>0&&w<20&&h<20){v.Exact=true;v.Center=new Vector2(x,y);v.Size=new Vector2(w,h);}
+  v.Column=c;v.Row=r;v.Plant=t;v.SpriteName=name;v.Active=true;v.Expires=Time.unscaledTime+1.5f;
+ }
     static bool ReadVisual(out Sprite sprite,out Bounds bounds)
     {
         sprite=null;bounds=default;
@@ -103,28 +91,21 @@ public static class PlacementPreview
             Ui.Place(rt,new Rect(positions[i].x,positions[i].y,s,s*21f/19f));rt.localEulerAngles=new Vector3(0,0,rotations[i]);list[i].color=color;Ui.Show(list[i],true);
         }
     }
-    public static void Tick()
-    {
-        if(!Sync.Running||Ui.Root==null){Reset();return;}
-        if(ownArrows==null)ownArrows=MakeArrows();
-        if(ReadVisual(out _,out Bounds own)&&Project(own.center,own.size,out Rect ownRect))DrawArrows(ownArrows,ownRect,Color.white);else HideArrows(ownArrows);
-        if(Time.unscaledTime>=nextSend){nextSend=Time.unscaledTime+.08f;string state=ReadLocal();if(state!=last||(state!="0"&&Time.unscaledTime-lastSend>=.4f)){Party.SendFast("preview",state,false);last=state;lastSend=Time.unscaledTime;}}
-        if(!remote||Time.unscaledTime>expires||Mouse.Instance==null){HideRemote();return;}
-        Vector2 center=worldCenter,size=worldSize;
-        if(!exact){float x=Mouse.Instance.GetBoxXFromColumn(column);center=new Vector2(x,Mouse.Instance.GetLandY(x,row));size=Vector2.one;}
-        if(!Project(center,size,out Rect rect)){HideRemote();return;}
-        if(friendArrows==null){friendArrows=MakeArrows();tile=friendArrows[0];icon=Ui.Img(Ui.Root,new Rect(0,0,1,1),Ui.White,new Color(1,1,1,.55f));icon.preserveAspect=true;icon.useSpriteMesh=true;label=Ui.Text(Ui.Root,new Rect(0,0,160,22),"TEAMMATE",15,new Color(.75f,1,.55f));}
-        if(friendArtType!=plant){if(friendArt!=null){friendArt.gameObject.SetActive(false);UnityEngine.Object.Destroy(friendArt.gameObject);}friendArt=PartnerBank.MakePlantPreview(plant,Ui.Root);friendArtType=plant;}
-        if(friendArt!=null){
-            float factor=Mathf.Min(rect.width/Mathf.Max(1,friendArt.rect.width),rect.height/Mathf.Max(1,friendArt.rect.height));
-            friendArt.localScale=new Vector3(factor,factor,1);
-            friendArt.anchoredPosition=new Vector2(rect.center.x-friendArt.rect.width*factor/2,-rect.center.y+friendArt.rect.height*factor/2);
-            Ui.Show(friendArt,true);Ui.Show(icon,false);
-        }else{
-            if((cachedArt==null||cachedArt.WasCollected)&&Time.unscaledTime>=nextArtLookup){nextArtLookup=Time.unscaledTime+2;cachedArt=spriteName.Length>0?ResolveArt(spriteName):null;if(cachedArt==null)cachedArt=Ui.Sprite(((PlantType)plant).ToString());}
-            icon.sprite=cachedArt;Ui.Place(icon.rectTransform,rect);Ui.Show(icon,cachedArt!=null);
-        }
-        DrawArrows(friendArrows,rect,new Color(.6f,1f,.55f,1));
-        Ui.Place(label.rectTransform,new Rect(Mathf.Clamp(rect.center.x-80,0,Ui.Width-160),Mathf.Max(0,rect.y-36),160,22));Ui.Show(label,true);
-    }
+    public static void Tick(){
+  if(!Sync.Running||Sync.ResultSent||Sync.ResultApplied||Ui.Root==null){Reset();return;}
+  if(ownArrows==null)ownArrows=MakeArrows();
+  if(ReadVisual(out _,out Bounds own)&&Project(own.center,own.size,out Rect ownRect))DrawArrows(ownArrows,ownRect,TeamUi.ColorFor(Party.PlayerId));else HideArrows(ownArrows);
+  if(Time.unscaledTime>=nextSend){nextSend=Time.unscaledTime+.08f;string state=ReadLocal();if(state!=last||(state!="0"&&Time.unscaledTime-lastSend>=.4f)){Party.SendFast("preview",state,false);last=state;lastSend=Time.unscaledTime;}}
+  foreach(var v in remotes.Values)Draw(v);
+ }
+ static void Draw(Remote v){
+  if(!v.Active||Time.unscaledTime>v.Expires||Mouse.Instance==null){Hide(v);return;}
+  Vector2 center=v.Center,size=v.Size;if(!v.Exact){float x=Mouse.Instance.GetBoxXFromColumn(v.Column);center=new Vector2(x,Mouse.Instance.GetLandY(x,v.Row));size=Vector2.one;}
+  if(!Project(center,size,out Rect rect)){Hide(v);return;}
+  if(v.Arrows==null){v.Arrows=MakeArrows();v.Icon=Ui.Img(Ui.Root,new Rect(0,0,1,1),Ui.White,new Color(1,1,1,.55f));v.Icon.preserveAspect=true;v.Icon.useSpriteMesh=true;v.Label=Ui.Text(Ui.Root,new Rect(0,0,160,22),Party.DisplayName(v.Id),15,TeamUi.ColorFor(v.Id));}
+  if(v.ArtType!=v.Plant||v.ArtRevision!=PartnerBank.ArtRevision){if(v.Art!=null){v.Art.gameObject.SetActive(false);UnityEngine.Object.Destroy(v.Art.gameObject);}v.Art=PartnerBank.MakePlantPreview(v.Plant,Ui.Root);v.ArtType=v.Plant;v.ArtRevision=PartnerBank.ArtRevision;}
+  if(v.Art!=null){float factor=Mathf.Min(rect.width/Mathf.Max(1,v.Art.rect.width),rect.height/Mathf.Max(1,v.Art.rect.height));v.Art.localScale=new Vector3(factor,factor,1);v.Art.anchoredPosition=new Vector2(rect.center.x-v.Art.rect.width*factor/2,-rect.center.y+v.Art.rect.height*factor/2);Ui.Show(v.Art,true);Ui.Show(v.Icon,false);}
+  else{if((v.Cached==null||v.Cached.WasCollected)&&Time.unscaledTime>=v.NextLookup){v.NextLookup=Time.unscaledTime+2;v.Cached=v.SpriteName.Length>0?ResolveArt(v.SpriteName):null;if(v.Cached==null)v.Cached=Ui.Sprite(((PlantType)v.Plant).ToString());}v.Icon.sprite=v.Cached;Ui.Place(v.Icon.rectTransform,rect);Ui.Show(v.Icon,v.Cached!=null);}
+  Ukrainian.MarkInput(v.Label);v.Label.text=Party.DisplayName(v.Id);v.Label.enableAutoSizing=true;v.Label.fontSizeMin=10;v.Label.fontSizeMax=15;v.Label.enableWordWrapping=false;v.Label.overflowMode=TextOverflowModes.Ellipsis;DrawArrows(v.Arrows,rect,TeamUi.ColorFor(v.Id));Ui.Place(v.Label.rectTransform,new Rect(Mathf.Clamp(rect.center.x-80,0,Ui.Width-160),Mathf.Max(0,rect.y-36),160,22));Ui.Show(v.Label,true);
+ }
 }

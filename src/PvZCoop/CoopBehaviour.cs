@@ -32,6 +32,8 @@ public class CoopBehaviour : MonoBehaviour
 	{
 		Ukrainian.Tick();
 		Party.Tick();
+        PlantIdentity.Tick();
+        PlantGloveSync.Tick();
         SharedSun.Tick();DeckSharing.Tick();
 		if (Party.InParty && !Application.runInBackground)
 		{
@@ -54,7 +56,15 @@ public class CoopBehaviour : MonoBehaviour
 		Unlocks.Tick();
 		try
 		{
+			SunVisuals.Tick();
+			VictorySync.Tick();
+			ZombieVisuals.Tick();
+			ZombieEffects.Tick();
+            ZombieDeathEffects.Tick();
 			Sync.Tick();
+            MineStateSync.Tick();
+            PlantStateSync.Tick();
+            ChomperSync.Tick();
 		}
 		catch (Exception ex2)
 		{
@@ -69,10 +79,8 @@ public class CoopBehaviour : MonoBehaviour
 			_nextMenuCheck = Time.unscaledTime + 0.5f;
 			_menu = UnityEngine.Object.FindObjectOfType<MainMenu>();
 			_onMainMenu = _menu != null && _menu.isActiveAndEnabled;
-			if (_onMainMenu && Session.Active)
-			{
-				Session.Reset();
-			}
+            // MainMenu can remain alive while a level loads. Session transitions
+            // are reset by the explicit native menu hooks, never by visibility.
 			if (_onMainMenu)
 			{
 				PvP.OnMainMenu();
@@ -97,7 +105,10 @@ public class CoopBehaviour : MonoBehaviour
 		try
 		{
 			LanguageSelection.Tick(_menu, _onMainMenu);
+            TeamUi.Tick();
             Screens.Tick(_menu, _onMainMenu);
+            CoopPause.Tick();
+            Sync.RenderZombieMotion();
             PlacementPreview.Tick();
 		}
 		catch (Exception ex)

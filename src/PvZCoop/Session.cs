@@ -13,23 +13,29 @@ public static class Session
 {
 	public static bool Active;
 
-	public static bool PartnerInLevel;
+	public static bool PartnerInLevel { get=>Party.RemotePlayers.Length>0&&Party.RemotePlayers.All(id=>TeamState.For(id).InLevel); set {if(Party.SenderId>0)TeamState.For(Party.SenderId).InLevel=value;else foreach(int id in Party.RemotePlayers)TeamState.For(id).InLevel=value;} }
 
 	public static bool MyReady;
 
-	public static bool PartnerReady;
+	public static bool PartnerReady { get=>TeamState.AllReady; set {if(Party.SenderId>0)TeamState.For(Party.SenderId).Ready=value;else foreach(int id in Party.RemotePlayers)TeamState.For(id).Ready=value;} }
 
 	public static bool Started;
+    public static bool BattleLive {get;private set;}
+    static bool loaded;
     public static System.Collections.Generic.List<int> MySlotKeys=new();
-    public static System.Collections.Generic.List<int> PartnerSlotKeys=new();
+    public static System.Collections.Generic.List<int> PartnerSlotKeys {get=>TeamState.For(Party.PartnerPlayer).Slots;set=>TeamState.For(Party.SenderId>0?Party.SenderId:Party.PartnerPlayer).Slots=value;}
 
 	public static System.Collections.Generic.List<(int type, int cost)> MyDeck = new System.Collections.Generic.List<(int, int)>();
 
-	public static System.Collections.Generic.List<(int type, int cost)> PartnerDeck = new System.Collections.Generic.List<(int, int)>();
+	public static System.Collections.Generic.List<(int type, int cost)> PartnerDeck {get=>TeamState.For(Party.PartnerPlayer).Deck;set=>TeamState.For(Party.SenderId>0?Party.SenderId:Party.PartnerPlayer).Deck=value;}
 
 	public static LevelType Level;
 
 	public static int LevelNumber;
+    public static int LevelId;
+    public static string LevelName="";
+    static (LevelType type,int number,int id,string name)? restart;
+    static float restartAt;
 
 	public static bool Allow;
 
@@ -91,12 +97,16 @@ public static class Session
 	public static void Init()
 	{
 		Party.OnMessage += OnMessage;
+        Party.OnMessage += WaveSync.Receive;
 	}
 
 	public static void Reset()
 	{
 		RestoreStartButton();
-        DeckSharing.Reset();SharedSun.Reset();
+        BattleLive=loaded=false;
+        TeamState.Reset();
+        DeckSharing.Reset();SharedSun.Reset();SunVisuals.Reset();
+        VictorySync.Reset();WaveSync.ResetProgress();
 		Active = (PartnerInLevel = (MyReady = (PartnerReady = (Started = false))));
 		if (Holding)
 		{
@@ -113,15 +123,10 @@ public static class Session
 	{
 		Time.timeScale = 1f;
 		GameObject gameObject = ((Board.Instance != null) ? Board.Instance.gameObject : null);
-		InGameUI instance = InGameUI.Instance;
-		if (instance != null)
-		{
-			instance.BackToMainMenu();
-		}
-		else
-		{
-			UIMgr.BackToMenu();
-		}
+        // BackToMainMenu can return to the previous mode selector. A network
+        // transition needs the actual root menu, with no intervening selection UI.
+        if(GameAPP.UIManager!=null)GameAPP.UIManager.PopAll();
+        UIMgr.EnterMainMenu();
 		if (gameObject != null && !gameObject.WasCollected)
 		{
 			Plugin.Logger.LogInfo("leaving level: removing the lawn");
@@ -132,11 +137,12 @@ public static class Session
 	public static bool OnEnterGame(LevelType type, int number, int id, string name)
 	{
         if (!Allow && (Party.Busy || (Party.InParty && !Party.PartnerPresent)))
-        { ShowToast("Wait for player 2 to connect before choosing a level."); return false; }
+        { ShowToast("Wait for teammates to connect before choosing a level."); return false; }
 		if (Allow || !Coop)
 		{
 			return true;
 		}
+        if(Active&&Started&&type==Level&&number==LevelNumber){RequestRestart();return false;}
 		if (!Party.IsHost)
 		{
 			ShowToast("Only the party host can choose the level.");
@@ -145,22 +151,39 @@ public static class Session
 		Reset();
 		Active = true;
 		Level = type;
-		LevelNumber = number;
+		LevelNumber = number;LevelId=id;LevelName=name??"";
 		PvP.OnLevelOpened();
 		Unlocks.SendNow();
-		Party.Send("level", $"{(int)type}|{number}|{id}|{name}");
+		Party.Send("level", $"{(int)type}|{number}|{id}|{name}|{CampaignProgress.Encode()}");
 		ShowToast($"Starting {type} {number} with {Party.PartnerName}...");
 		return true;
 	}
+
+    public static void RequestRestart(){
+        if(!Active||!Started||!Party.PartnerPresent)return;
+        if(!Party.IsHost){Party.Send("restart_request","");ShowToast("Restart requested.",2);return;}
+        if(restart.HasValue)return;
+        var target=(Level,LevelNumber,LevelId,LevelName);
+        Party.Send("menu","");
+        Allow=true;
+        try{LeaveLevel();}finally{Allow=false;}
+        Reset();
+        SaveMgr.ClearBoard(target.LevelNumber,target.LevelId);
+        restart=target;restartAt=Time.unscaledTime+.4f;
+    }
+    static void TickRestart(){
+        if(!restart.HasValue)return;
+        if(!Party.IsHost||!Party.PartnerPresent){restart=null;return;}
+        if(Time.unscaledTime<restartAt||!OnMainMenu())return;
+        var level=restart.Value;restart=null;
+        UIMgr.EnterGame(level.type,level.number,level.id,level.name);
+    }
 
 	public static void OnBackToMenu()
 	{
 		if (!Allow && Active)
 		{
-			if (Party.IsHost)
-			{
-				Party.Send("menu", "");
-			}
+            Party.Send(Party.IsHost?"menu":"level_exit", "");
 			Reset();
 		}
 	}
@@ -329,6 +352,8 @@ public static class Session
 			_fakeReadyAt = -1f;
 			OnMessage("ready", "1|0:100,1:50,2:150,3:50");
 		}
+        TickRestart();
+        TickLoading();
 		TickPendingLevel();
 		TickStartButton();
 		if (Active && !Started)
@@ -340,6 +365,16 @@ public static class Session
 			Time.timeScale = 0f;
 		}
 	}
+
+    static void TickLoading(){
+        if(!Active||!Started||BattleLive)return;
+        if(!loaded&&Board.Instance!=null&&GameAPP.theGameStatus==GameStatus.InGame){loaded=true;Party.Send("battle_loaded","");}
+        TryLive();
+    }
+    static void TryLive(){
+        if(!Party.IsHost||!loaded||BattleLive||Party.RemotePlayers.Any(id=>!TeamState.For(id).Loaded))return;
+        BattleLive=true;Party.Send("battle_live","");ShowToast("All players loaded - battle started!",2);
+    }
 
 	private static System.Collections.Generic.List<(int, int)> ReadDeck()
 	{
@@ -390,7 +425,7 @@ public static class Session
                 finally { Allow=false; }
             }
 			SharedSun.Start();
-			ShowToast("Both players ready - go!");
+			ShowToast("All players ready - go!");
 		}
 	}
 
@@ -409,8 +444,10 @@ public static class Session
 		Reset();
 		Active = true;
 		PvP.OnLevelOpened();
+		TeamState.For(1).InLevel=true;
 		Level = (LevelType)int.Parse(p[0]);
-		LevelNumber = int.Parse(p[1]);
+		LevelNumber = int.Parse(p[1]);LevelId=int.Parse(p[2]);LevelName=p.Length>3?p[3]:"";
+        if(Level==LevelType.Advanture&&p.Length>4)CampaignProgress.Apply(p[4]);
 		ShowToast($"{Party.PartnerName} started {Level} {LevelNumber}");
 		Allow = true;
 		try
@@ -448,6 +485,13 @@ public static class Session
 		string[] array = payload.Split('|');
 		switch (type)
 		{
+        case "battle_loaded":
+            TeamState.For(Party.SenderId).Loaded=true;TryLive();break;
+        case "battle_live":
+            if(!Party.IsHost&&Started&&loaded)BattleLive=true;break;
+        case "restart_request":
+            if(Party.IsHost)RequestRestart();
+            break;
 		case "level":
 			if (Party.IsHost)
 			{
@@ -484,7 +528,8 @@ public static class Session
 			PartnerDeck = ((array.Length > 1 && array[1].Length > 0) ? (from s in array[1].Split(',')
 				select s.Split(':') into a
 				select (int.Parse(a[0]), (a.Length > 1) ? int.Parse(a[1]) : 0)).ToList() : new System.Collections.Generic.List<(int, int)>());
-			ShowToast(Party.PartnerName + (PartnerReady ? " is ready" : " is not ready"), 2.5f);
+			ShowToast(Party.PartnerName + (TeamState.For(Party.SenderId).Ready ? " is ready" : " is not ready"), 2.5f);
+            if(Started&&Party.SenderId==Party.PartnerPlayer){PartnerBank.Build();PartnerBank.SetCooldowns(TeamState.For(Party.SenderId).Cooldowns);}
 			TryStart();
 			break;
 		case "go":
@@ -493,6 +538,11 @@ public static class Session
 				Go();
 			}
 			break;
+        case "level_exit":
+            if(!Party.IsHost || !Active)break;
+            Party.Send("menu", "");Reset();
+            Allow=true;try{LeaveLevel();}finally{Allow=false;}
+            break;
 		case "menu":
 			if (Party.IsHost || !Active)
 			{

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using Steamworks;
 using TMPro;
 using UnityEngine;
@@ -67,6 +68,7 @@ public static class Screens
 
 	private static TextMeshProUGUI _name1;
 
+
 	private static TextMeshProUGUI _name2;
 
 	private static TextMeshProUGUI _role1;
@@ -106,6 +108,9 @@ public static class Screens
 	private static TextMeshProUGUI _inviteText;
 
 	private static RectTransform _seedStatus;
+    private static RectTransform _seedRows;
+    private static Image _seedFrame;
+    private static TextMeshProUGUI[] _teamNumbers=new TextMeshProUGUI[4];
 
 	private static AvatarView _sAv1;
 
@@ -144,6 +149,12 @@ public static class Screens
 	private static TextMeshProUGUI _resultReason;
 
 	private static MainMenu _blockedMenu;
+    private static TextMeshProUGUI _rosterText,_teamReadyText;
+    private static readonly TextMeshProUGUI[] _lobbyNames=new TextMeshProUGUI[4],_lobbyNumbers=new TextMeshProUGUI[4],_lobbyRoles=new TextMeshProUGUI[4];
+    private static readonly Image[] _lobbySeparators=new Image[4];
+    private static TextMeshProUGUI[] _teamNames=new TextMeshProUGUI[4];
+    private static Image[] _teamDots=new Image[4];
+    private static Image[] _teamSeparators=new Image[4];
 
 	private static Transform R => Ui.Root;
 
@@ -228,14 +239,24 @@ public static class Screens
 		{
 			GUIUtility.systemCopyBuffer = Party.Code;
 		}, "buttonsmall", 24f);
+		_rosterText=Ui.Text(_vIn,new Rect(60,105,560,180),"",28,Ui.Pale,TextAlignmentOptions.Left);Ukrainian.MarkInput(_rosterText);_rosterText.enableAutoSizing=true;_rosterText.fontSizeMin=16;_rosterText.fontSizeMax=28;_rosterText.enableWordWrapping=false;_rosterText.overflowMode=TextOverflowModes.Ellipsis;
+        Ui.Show(_rosterText,false);
+        for(int i=0;i<4;i++){
+            _lobbyNumbers[i]=Ui.Text(_vIn,new Rect(60,105+i*45,35,39),"",26,Ui.Pale,TextAlignmentOptions.Left);
+            _lobbyNames[i]=Ui.Text(_vIn,new Rect(104,105+i*45,307,39),"",30,Ui.Pale,TextAlignmentOptions.Left);
+            Ukrainian.MarkInput(_lobbyNames[i]);_lobbyNames[i].enableAutoSizing=true;_lobbyNames[i].fontSizeMin=18;_lobbyNames[i].fontSizeMax=30;_lobbyNames[i].enableWordWrapping=false;_lobbyNames[i].overflowMode=TextOverflowModes.Ellipsis;
+            _lobbyRoles[i]=Ui.Text(_vIn,new Rect(419,105+i*45,201,39),"",20,Ui.Pale,TextAlignmentOptions.Right);
+            _lobbyRoles[i].enableAutoSizing=true;_lobbyRoles[i].fontSizeMin=16;_lobbyRoles[i].fontSizeMax=20;_lobbyRoles[i].enableWordWrapping=false;
+            _lobbySeparators[i]=Ui.Img(_vIn,new Rect(60,148+i*45,560,1),Ui.White,new Color(.8f,.8f,.7f,.2f));
+        }
 		_av1 = new AvatarView(_vIn, new Rect(60f, 105f, 54f, 54f));
 		_name1 = Ui.Text(_vIn, new Rect(126f, 105f, 360f, 54f), "", 34f, Color.white, TextAlignmentOptions.Left);
 		_role1 = Ui.Text(_vIn, new Rect(480f, 105f, 140f, 54f), "", 24f, Ui.Gold, TextAlignmentOptions.Right);
 		_av2 = new AvatarView(_vIn, new Rect(60f, 168f, 54f, 54f));
 		_name2 = Ui.Text(_vIn, new Rect(126f, 168f, 360f, 54f), "", 34f, Color.white, TextAlignmentOptions.Left);
 		_role2 = Ui.Text(_vIn, new Rect(480f, 168f, 140f, 54f), "", 24f, Ui.Gold, TextAlignmentOptions.Right);
-		_pvpBox = Ui.Node(_vIn, "pvp", new Rect(0f, 236f, 680f, 260f));
-        Ui.Text(_pvpBox, new Rect(60f, 10f, 560f, 170f), "READY TO PLAY\n\nClose this window and choose a level.\nBoth players select cards, then READY.\nYou defend the same lawn together.", 30f, Ui.Pale);
+		_pvpBox = Ui.Node(_vIn, "pvp", new Rect(0f, 300f, 680f, 180f));
+        Ui.Text(_pvpBox, new Rect(60f, 10f, 560f, 160f), "READY TO PLAY\n\nConnect all players before choosing a level.\nEveryone selects cards, then READY.\nYou defend the same lawn together.", 24f, Ui.Pale);
 		_leave = Ui.Button(_vIn, new Rect(55f, 552f, 230f, 68f), "LEAVE", delegate
 		{
 			Party.Leave();
@@ -299,12 +320,24 @@ public static class Screens
 
 	private static void BuildSeedScreen()
 	{
-		_seedStatus = Ui.Dialog(R, new Rect(0f, 0f, 220f, 240f), header: false, compact: true);
+		_seedStatus = Ui.Dialog(R, new Rect(0f, 0f, 300f, 200f), header: false, compact: true);
+        _seedFrame=_seedStatus.GetChild(0).GetComponent<Image>();
+        _seedRows=Ui.Node(_seedStatus,"ReadinessRows",new Rect(36,28,228,144));
+        _seedRows.gameObject.AddComponent<RectMask2D>();
 		RectTransform seedStatus = _seedStatus;
 		Vector2 anchorMin = (_seedStatus.anchorMax = new Vector2(1f, 0.5f));
 		seedStatus.anchorMin = anchorMin;
 		_seedStatus.pivot = new Vector2(1f, 0.5f);
 		_seedStatus.anchoredPosition = new Vector2(-20f, 0f);
+		_teamReadyText=Ui.Text(_seedStatus,new Rect(20,25,190,190),"",20,Ui.Pale,TextAlignmentOptions.Left);
+        for(int player=0;player<4;player++){
+            _teamNumbers[player]=Ui.Text(_seedRows,new Rect(6,player*48,30,42),"",34,Ui.Pale,TextAlignmentOptions.Left);
+            _teamNames[player]=Ui.Text(_seedRows,new Rect(48,player*48,150,42),"",34,Ui.Pale,TextAlignmentOptions.Left);
+            foreach(var label in new[]{_teamNames[player],_teamNumbers[player]}){Ukrainian.MarkInput(label);label.enableAutoSizing=false;label.fontSize=34;label.enableWordWrapping=false;label.overflowMode=TextOverflowModes.Ellipsis;}
+            _teamDots[player]=Ui.Img(_seedRows,new Rect(210,12+player*48,18,18),Ui.Circle,Ui.Dim);
+            _teamSeparators[player]=Ui.Img(_seedRows,new Rect(6,46+player*48,222,1.5f),Ui.White,new Color(.9f,.82f,.6f,.22f));
+        }
+
 		_sAv1 = new AvatarView(_seedStatus, new Rect(50f, 36f, 66f, 66f));
 		_dot1 = Ui.Img(_seedStatus, new Rect(134f, 54f, 30f, 30f), Ui.Circle, Ui.Dim);
 		_sAv2 = new AvatarView(_seedStatus, new Rect(50f, 112f, 66f, 66f));
@@ -317,8 +350,10 @@ public static class Screens
 		_toastBg = Ui.Plate(R, new Rect(0f, 0f, 820f, 58f));
 		TopCenter(_toastBg.rectTransform, 160f, 820f, 58f);
 		_toastText = Ui.Text(_toastBg.rectTransform, new Rect(14f, 0f, 792f, 58f), "", 28f, Ui.Gold);
-		_tagMe = Ui.Plate(R, new Rect(0f, 0f, 170f, 28f));
-		_tagMeText = Ui.Text(_tagMe.rectTransform, new Rect(10f, 0f, 150f, 28f), "", 20f, Color.white, TextAlignmentOptions.Left);
+		_tagMe = Ui.Img(R,new Rect(278f,150f,248f,46f),CoopArt.Badge);
+        _tagMeText=Ui.Text(_tagMe.rectTransform,new Rect(13,3,225,24),"",19,Ui.Gold,TextAlignmentOptions.Left);
+        Ukrainian.MarkInput(_tagMeText);_tagMeText.enableAutoSizing=true;_tagMeText.fontSizeMin=11;_tagMeText.fontSizeMax=19;_tagMeText.enableWordWrapping=false;
+        Ui.Text(_tagMe.rectTransform,new Rect(13,25,225,18),"YOUR CARDS",14,Ui.Pale,TextAlignmentOptions.Left);
 		_tagPartner = Ui.Plate(R, new Rect(0f, 0f, 200f, 28f));
 		_tagPartnerText = Ui.Text(_tagPartner.rectTransform, new Rect(10f, 0f, 150f, 28f), "", 20f, Color.white, TextAlignmentOptions.Left);
 		_redLine = Ui.Img(R, new Rect(0f, 0f, 6f, 10f), Ui.White, new Color(0.95f, 0.1f, 0.1f, 0.85f));
@@ -376,7 +411,7 @@ public static class Screens
 			_blockedMenu = null;
 		}
 		Ui.Show(_menuBtn.Rt, onMain && !PanelOpen && !LanguageSelection.Open);
-		_menuBtn.Text = ((!Party.InParty) ? "CO-OP" : (Party.PartnerPresent ? "CO-OP  2 / 2" : "CO-OP  1 / 2"));
+		_menuBtn.Text = Party.InParty ? "CO-OP  "+Party.PlayerCount+" / 4" : "CO-OP (2-4)";
 		Ui.Show(_invitePopup, onMain && Party.InviteLobby != CSteamID.Nil);
 		if (Party.InviteLobby != CSteamID.Nil)
 		{
@@ -424,7 +459,7 @@ public static class Screens
 		CSteamID id = (isHost ? Party.MyId : Party.PartnerId);
 		CSteamID id2 = (isHost ? Party.PartnerId : Party.MyId);
 		_av1.Set(id, text2, Ui.Red);
-		_name1.text = isHost ? "You" : "Teammate";
+		Ukrainian.MarkInput(_name1);_name1.enableAutoSizing=true;_name1.fontSizeMin=14;_name1.fontSizeMax=34;_name1.text=text2;
 		_role1.text = "SERVER";
 		bool partnerPresent = Party.PartnerPresent;
 		_av2.Show(partnerPresent);
@@ -432,11 +467,20 @@ public static class Screens
 		{
 			_av2.Set(id2, text3, Ui.Gold);
 		}
-		_name2.text = partnerPresent ? (isHost ? "Teammate" : "You") : "Waiting for teammate...";
+		Ukrainian.MarkInput(_name2);_name2.enableAutoSizing=true;_name2.fontSizeMin=14;_name2.fontSizeMax=34;_name2.text=partnerPresent?text3:Ukrainian.Translate("Waiting for teammate...");
 		_name2.color = (partnerPresent ? Color.white : Ui.Dim);
 		_role2.text = partnerPresent ? "CONNECTED" : "";
 		Ui.Show(_pvpBox, partnerPresent);
         Ui.Show(_invite.Rt, false);
+        _av1.Show(false);_av2.Show(false);Ui.Show(_name1,false);Ui.Show(_name2,false);Ui.Show(_role1,false);Ui.Show(_role2,false);
+        var members=Party.Members;
+        for(int i=0;i<4;i++){
+            bool show=i<members.Length;Ui.Show(_lobbyNumbers[i],show);Ui.Show(_lobbyNames[i],show);Ui.Show(_lobbyRoles[i],show);Ui.Show(_lobbySeparators[i],show&&i<members.Length-1);
+            if(!show)continue;int player=members[i];
+            _lobbyNumbers[i].text=player+".";_lobbyNames[i].text=Party.DisplayName(player);
+            string role=player==1?(LanguageSelection.UkrainianEnabled?"ХОСТ":"HOST"):(LanguageSelection.UkrainianEnabled?"ПІДКЛЮЧЕНО":"CONNECTED");
+            _lobbyRoles[i].text=role+(player==Party.PlayerId?(LanguageSelection.UkrainianEnabled?" · ВИ":" · YOU"):"");
+        }
 	}
 
 	private static string TeamTag(PvP.Team t)
@@ -508,12 +552,38 @@ public static class Screens
 		if (flag)
 		{
 			bool isHost = Party.IsHost;
+            
+            
 			_sAv1.Set(isHost ? Party.MyId : Party.PartnerId, isHost ? Party.MyName : Party.PartnerName, Ui.Red);
 			_sAv2.Set(isHost ? Party.PartnerId : Party.MyId, isHost ? Party.PartnerName : Party.MyName, Ui.Gold);
 			bool flag3 = (isHost ? Session.MyReady : Session.PartnerReady);
 			bool flag4 = (isHost ? Session.PartnerReady : Session.MyReady);
 			_dot1.color = (flag3 ? Ui.Green : Ui.Dim);
 			_dot2.color = (flag4 ? Ui.Green : Ui.Dim);
+            _sAv1.Show(false);_sAv2.Show(false);Ui.Show(_dot1,false);Ui.Show(_dot2,false);
+            Ui.Show(_teamReadyText,false);
+            var members=Party.Members;
+            float nameWidth=100;
+            foreach(int id in members)nameWidth=Mathf.Max(nameWidth,_teamNames[0].GetPreferredValues(Party.DisplayName(id)).x+12);
+            nameWidth=Mathf.Min(nameWidth,240);
+            float contentWidth=48+nameWidth+18+18+8;
+            float height=72+Mathf.Max(1,members.Length)*48,width=72+contentWidth;
+            _seedStatus.sizeDelta=new Vector2(width,height);
+            if(_seedFrame!=null)Ui.Place(_seedFrame.rectTransform,new Rect(0,0,width,height));
+            Ui.Place(_seedRows,new Rect(36,28,contentWidth,height-72));
+            for(int i=0;i<4;i++){
+                bool present=i<members.Length;
+                Ui.Show(_teamNumbers[i],present);Ui.Show(_teamNames[i],present);Ui.Show(_teamDots[i],present);Ui.Show(_teamSeparators[i],present&&i<members.Length-1);
+                if(!present)continue;int id=members[i];
+                _teamNumbers[i].text=id+".";_teamNames[i].text=Party.DisplayName(id);
+                Ui.Place(_teamNumbers[i].rectTransform,new Rect(6,i*48,30,42));
+                Ui.Place(_teamNames[i].rectTransform,new Rect(48,i*48,nameWidth,42));
+                Ui.Place(_teamDots[i].rectTransform,new Rect(48+nameWidth+8,12+i*48,18,18));
+                Ui.Place(_teamSeparators[i].rectTransform,new Rect(6,46+i*48,contentWidth-12,1.5f));
+                bool ready=id==Party.PlayerId?Session.MyReady:TeamState.For(id).Ready;
+                _teamDots[i].color=ready?Ui.Green:Ui.Dim;
+            }
+
 		}
 	}
 
@@ -526,14 +596,14 @@ public static class Screens
 			_toastText.text = toast;
 		}
 		int used = 0;
-		bool flag = Sync.Running && !PvP.Enabled;
+		bool flag = Sync.Running && !PvP.Enabled && !Sync.ResultSent && !Sync.ResultApplied;
 		Ui.Show(_tagMe, false);
 		Ui.Show(_tagPartner, false);
 		if (flag)
 		{
 			Rect rect = Ui.FromScreen(PartnerBank.MyScreenRect);
-			Ui.Place(_tagMe.rectTransform, new Rect(rect.x + 8f, rect.yMax + 2f, 170f, 28f));
-			_tagMeText.text = "YOUR CARDS";
+			Ui.Place(_tagMe.rectTransform,new Rect(Party.RemotePlayers.Length>1?30+Party.RemotePlayers.Length*170:278,150f,248f,46f));
+            _tagMeText.text=Party.MyName;
 			if (PartnerBank.Visible)
 			{
 				Rect rect2 = Ui.FromScreen(PartnerBank.ScreenRect);

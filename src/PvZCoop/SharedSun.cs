@@ -1,75 +1,218 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using UnityEngine;
 namespace PvZCoop;
 
-// The host owns the wallet. A short planting lease serializes native spending,
-// while the original Fusion placement code still decides cost, fusion and refunds.
+// The host executes every paid guest action. A guest never proposes a wallet
+// delta. The round-scoped journal owns idempotent decisions and cancellation.
 public static class SharedSun
 {
-    sealed class Click {
-        public CardUI Card; public int Kind; public int Column,Row;public float X,Y;public Vector3 Preview;
-        public Click(Mouse m,CardUI card=null,int kind=0){Kind=kind;Card=card??m.theCardOnMouse;Column=m.theMouseColumn;Row=m.theMouseRow;X=m.theBoxXofMouse;Y=m.theBoxYofMouse;Preview=m.preview==null?Vector3.zero:m.preview.transform.position;}
+    sealed class Pending {public PlantTransaction Request;public double Deadline,Retry;public bool Granted,Cancel;}
+    static readonly System.Diagnostics.Stopwatch clock=System.Diagnostics.Stopwatch.StartNew();
+    static double Now=>clock.Elapsed.TotalSeconds;
+    static readonly SunLeaseQueue leases=new();
+    static readonly PlantOperationJournal journal=new();
+    static readonly List<(int Player,string Type,string Body)> publications=new();
+    static readonly Dictionary<(int,Guid),string> receipts=new();
+    static Pending pending;
+    static int nextToken,clientBalance,published=int.MinValue;
+    static long revision,lastRevision;
+    static bool initialized,recording,faulted;
+    public static bool Busy=>pending!=null||leases.Busy||faulted;
+    public static bool CanReceiveIncome=>!Sync.Running||Party.IsHost||Session.Allow;
+    public static void Init()=>Party.OnMessage+=Receive;
+    public static void Reset()
+    {
+        leases.Clear();journal.Clear();publications.Clear();receipts.Clear();pending=null;
+        nextToken=0;revision=lastRevision=0;published=int.MinValue;initialized=recording=faulted=false;HostPlanting.Reset();
     }
-    static Click pending,queuedHost;
-    static int nextToken,pendingToken,hostLease,clientBalance,published=int.MinValue,revision,lastRevision;
-    static bool initialized,replaying,awaitingCommit;
-    static DateTime deadline;
-    public static bool CanReceiveIncome=>!Sync.Running||Party.IsHost||replaying||Session.Allow;
-    public static bool Busy=>pending!=null||awaitingCommit||hostLease!=0;
-    public static void Init(){Party.OnMessage+=Receive;}
-    public static void Reset(){pending=queuedHost=null;pendingToken=hostLease=nextToken=revision=lastRevision=0;published=int.MinValue;initialized=replaying=awaitingCommit=false;}
-    public static void Start(){Reset();initialized=true;clientBalance=Board.Instance==null?0:Board.Instance.theSun;if(Party.IsHost)Publish(0);}
-    public static bool InterceptMouseClick(){var m=Mouse.Instance;if(!Sync.Running||replaying||!Input.GetMouseButtonDown(0)||m==null||m.theCardOnMouse==null||m.thePlantTypeOnMouse==PlantType.Nothing||m.theMouseColumn<0||m.theMouseRow<0)return true;return RequestPlanting();}
+    public static void Start(){Reset();initialized=true;clientBalance=Board.Instance==null?0:Board.Instance.theSun;if(Party.IsHost)Publish();}
+    static bool Live(CardUI c)=>c!=null&&!c.WasCollected;
+    static double Lease(int player)=>PlantTransactionPolicy.LeaseSeconds(Party.EstimatedRttSeconds(player));
+    public static bool InterceptMouseClick()
+    {
+        var m=Mouse.Instance;
+        return !Sync.Running||HostPlanting.ExecutionActive||!Input.GetMouseButtonDown(0)||m==null||
+            m.theCardOnMouse==null||m.thePlantTypeOnMouse==PlantType.Nothing||m.theMouseColumn<0||m.theMouseRow<0||RequestPlanting();
+    }
     public static bool RequestPlanting()
     {
-        if(!Sync.Running||replaying)return true;var m=Mouse.Instance;if(m?.theCardOnMouse==null)return true;
-        if(Party.IsHost){if(hostLease==0){if(Board.Instance.theSun<m.theCardOnMouse.theSeedCost){Session.ShowToast("Not enough shared sun.",2);return false;}return true;}if(queuedHost==null)queuedHost=new Click(m);return false;}
-        if(!initialized||pending!=null||awaitingCommit)return false;
-        pending=new Click(m);pendingToken=++nextToken;deadline=DateTime.UtcNow.AddSeconds(8);Party.Send("sun_request",pendingToken.ToString());return false;
+        if(!Sync.Running||HostPlanting.ExecutionActive)return true;
+        var m=Mouse.Instance;return m==null||!Live(m.theCardOnMouse)||Request(m.theCardOnMouse,0);
     }
-    public static bool SelectCard(CardUI card,bool inner)
+    public static bool SelectCard(CardUI card,bool inner)=>!Sync.Running||HostPlanting.ExecutionActive||!Live(card)||Request(card,inner?2:1);
+    static bool Request(CardUI card,int kind)
     {
-        if(!Sync.Running||replaying||card==null||Mouse.Instance==null)return true;
-        var click=new Click(Mouse.Instance,card,inner?2:1);
-        if(Party.IsHost){if(hostLease==0)return Board.Instance.theSun>=card.theSeedCost;if(queuedHost==null)queuedHost=click;return false;}
-        if(!initialized||pending!=null||awaitingCommit)return false;
-        pending=click;pendingToken=++nextToken;deadline=DateTime.UtcNow.AddSeconds(8);Party.Send("sun_request",pendingToken.ToString());return false;
+        if(!Session.BattleLive||CoopPause.IsPaused||faulted)return false;
+        if(Party.IsHost)return !leases.Busy&&Board.Instance.theSun>=card.theSeedCost;
+        if(!initialized||pending!=null||nextToken==int.MaxValue)return false;
+        var mouse=Mouse.Instance;if(mouse==null)return false;
+        var op=Guid.NewGuid();int c=mouse.theMouseColumn,r=mouse.theMouseRow;
+        if(kind!=0){c=Math.Clamp(c,0,Board.Instance.columnNum-1);r=Math.Clamp(r,0,Board.Instance.rowNum-1);}
+        var spawn=new PlantSpawnPacket(c,r,(int)card.thePlantType,false,true,0,0,op.ToString("N"),0);
+        pending=new(){Request=new(op,++nextToken,DeckSharing.Key(card),spawn,kind,(int)mouse.plantTowards),Deadline=Now+Lease(1)};
+        Retry();return false;
     }
-    static void Apply(int balance)
+    static void Apply(int value)
     {
-        if(Board.Instance==null)return;
-        Board.Instance.theSun=Math.Max(0,balance);
-        var ui=InGameUI.Instance;if(ui!=null)ui.UpdateSunDisplay();
-        Sync.PartnerSun=Board.Instance.theSun;
+        if(Board.Instance==null)return;Board.Instance.theSun=Math.Max(0,value);
+        if(InGameUI.Instance!=null)InGameUI.Instance.UpdateSunDisplay();Sync.PartnerSun=Board.Instance.theSun;
     }
-    static int Add(int balance,int delta)=>(int)Math.Clamp((long)balance+delta,0,int.MaxValue);
-    static void SetClient(int value,int rev){if(rev<lastRevision)return;lastRevision=rev;clientBalance=Math.Max(0,value);if(Board.Instance!=null)Apply(clientBalance);}
-    static void Publish(int completed){if(!Sync.Running||Board.Instance==null)return;published=Math.Max(0,Board.Instance.theSun);Apply(published);Party.Send("sun_balance",(++revision)+"|"+published+"|"+completed);Sync.PartnerSun=published;}
-    static void Execute(Click click)
+    static void SetClient(int value,long rev){if(rev<lastRevision)return;lastRevision=rev;clientBalance=Math.Max(0,value);Apply(clientBalance);}
+    static void Publish(){published=Math.Max(0,Board.Instance.theSun);Apply(published);Party.Send("sun_balance",(++revision)+"|"+published);}
+    public static bool BufferOutgoing(int player,string type,string body)
     {
-        var m=Mouse.Instance;if(m==null||click?.Card==null||click.Card.WasCollected||(click.Kind==0&&(m.theCardOnMouse==null||m.theCardOnMouse.Pointer!=click.Card.Pointer)))return;
-        if(Board.Instance==null||Board.Instance.theSun<click.Card.theSeedCost){Session.ShowToast("Not enough shared sun.",2);return;}
-        int row=m.theMouseRow,column=m.theMouseColumn;float x=m.theBoxXofMouse,y=m.theBoxYofMouse;var preview=m.preview;Vector3 position=preview==null?Vector3.zero:preview.transform.position;
-        m.theMouseRow=click.Row;m.theMouseColumn=click.Column;m.theBoxXofMouse=click.X;m.theBoxYofMouse=click.Y;if(preview!=null)preview.transform.position=click.Preview;
-        replaying=true;Sync.BeginAction();
-        try{if(click.Kind==1)m.ClickOnCard(click.Card);else if(click.Kind==2)m.ClickCard(click.Card);else m.TryToSetPlantByCard();}
-        finally{Sync.EndAction();replaying=false;m.theMouseRow=row;m.theMouseColumn=column;m.theBoxXofMouse=x;m.theBoxYofMouse=y;if(preview!=null&&!preview.WasCollected)preview.transform.position=position;}
+        if(!recording)return false;publications.Add((player,type,body));return true;
+    }
+    static void Flush()
+    {
+        var batch=publications.ToArray();publications.Clear();
+        foreach(var x in batch)if(x.Player==0)Party.Send(x.Type,x.Body);else Party.SendTo(x.Player,x.Type,x.Body);
+    }
+    static string CardReceipt(int player,int key)
+    {
+        var card=HostPlanting.GetCard(player,key);if(!Live(card))return "";
+        return FormattableString.Invariant($"{key}|{card.CD:R}|{card.fullCD:R}|{card.theSeedCost}|{card.usedTimes}|{card.Durability}");
+    }
+    static void Reply(PlantOperationJournal.Entry entry)
+    {
+        if(entry?.Result==null)return;
+        string receipt=receipts.TryGetValue((entry.Player,entry.Operation),out var saved)?saved:"";
+        if(entry.Request!=null){string current=CardReceipt(entry.Player,entry.Request.CardKey);if(current.Length>0)receipt=current;}
+        Party.SendTo(entry.Player,"sun_result",entry.Result.Encode()+"~"+receipt);
+    }
+    static void Grant(PlantOperationJournal.Entry e)=>Party.SendTo(e.Player,"sun_grant",e.Token+"|"+e.Operation.ToString("N")+"|"+Board.Instance.theSun+"|"+revision);
+    static void Admit(int player,PlantTransaction request)
+    {
+        if(!journal.Request(player,request,Now+Lease(player),out var e))
+        {
+            // Capacity never evicts tombstones. Unknown intents therefore can
+            // never be granted this round; acknowledge rejection so UI unlocks.
+            if(!journal.TryGet(player,request.OperationId,out _))
+                Party.SendTo(player,"sun_result",new PlantTransactionResult(request.OperationId,false,0,Math.Max(0,Board.Instance.theSun),revision).Encode()+"~");
+            return;
+        }
+        if(e.Phase==PlantOperationJournal.State.Complete){Reply(e);return;}
+        if(e.Phase==PlantOperationJournal.State.Granted){Grant(e);return;}
+        if(e.Phase==PlantOperationJournal.State.Executing)return;
+        if(faulted||!Session.BattleLive||CoopPause.IsPaused||!TeamState.For(player).Slots.Contains(request.CardKey))
+        {Cancel(player,request.LeaseToken,request.OperationId);return;}
+        if(!leases.Request(player,e.Token,e.Operation,e.Expires)&&leases.Owner==player&&leases.Operation!=e.Operation)Cancel(player,e.Token,e.Operation);
+    }
+    static void Cancel(int player,int token,Guid op)
+    {
+        if(!journal.Cancel(player,token,op,Math.Max(0,Board.Instance.theSun),revision,out var e))
+        {
+            if(token>0&&op!=Guid.Empty&&!journal.TryGet(player,op,out _))
+                Party.SendTo(player,"sun_result",new PlantTransactionResult(op,false,0,Math.Max(0,Board.Instance.theSun),revision).Encode()+"~");
+            return;
+        }
+        leases.Cancel(player,token,op);Reply(e);
+    }
+    static void Place(int player,PlantTransaction request)
+    {
+        if(journal.TryGet(player,request.OperationId,out var old)&&old.Phase==PlantOperationJournal.State.Complete){Reply(old);return;}
+        if(faulted||!leases.Matches(player,request.LeaseToken,request.OperationId,Now)||!journal.Begin(player,request,Now,out var e))return;
+        try
+        {
+            var card=HostPlanting.GetCard(player,request.CardKey);
+            if(!Live(card)||(int)card.thePlantType!=request.Spawn.Type)
+            {
+                if(!journal.Finish(e,false,0,Math.Max(0,Board.Instance.theSun),revision))throw new InvalidOperationException("Cannot reject invalid card intent.");
+                leases.Complete(player,request.LeaseToken);Reply(e);return;
+            }
+            publications.Clear();recording=true;HostPlanting.Outcome outcome;
+            try{outcome=HostPlanting.Execute(player,request.CardKey,request.Spawn.Column,request.Spawn.Row,request.Kind,request.Direction);}
+            finally{recording=false;}
+            bool accepted=outcome.Consumed||outcome.Picked;
+            if(!journal.Finish(e,accepted,accepted?outcome.PlantId:0,Math.Max(0,Board.Instance.theSun),++revision,outcome.Picked))throw new InvalidOperationException("Cannot commit native action.");
+            receipts[(player,e.Operation)]=CardReceipt(player,request.CardKey);
+            leases.Complete(player,request.LeaseToken);Flush();Publish();Reply(e);
+        }
+        catch(Exception error)
+        {
+            // A partial native mutation cannot be refunded safely. Keep its
+            // executing identity and pause instead of claiming rollback.
+            recording=false;faulted=true;
+            Plugin.Logger.LogError("Indeterminate native operation "+e.Operation+" buffered="+publications.Count+": "+error);
+            CoopPause.Request(true);Party.Send("sun_fault",e.Operation.ToString("N"));Session.ShowToast("Planting could not be confirmed. Restart this level.",30);
+        }
+    }
+    static void Retry()
+    {
+        if(pending==null)return;pending.Retry=Now+.5;
+        if(pending.Cancel)Party.Send("sun_cancel",pending.Request.LeaseToken+"|"+pending.Request.OperationId.ToString("N"));
+        else Party.Send(pending.Granted?"sun_place":"sun_request",pending.Request.Encode());
+    }
+    static CardUI LocalCard(int key)=>InGameUI.Instance?.Cards?.ToArray().FirstOrDefault(c=>Live(c)&&DeckSharing.Key(c)==key);
+    static void ApplyCard(CardUI card,string body)
+    {
+        if(!Live(card))return;var p=body.Split('|');if(p.Length!=6||!int.TryParse(p[0],out int key)||key!=DeckSharing.Key(card)||
+            !float.TryParse(p[1],NumberStyles.Float,CultureInfo.InvariantCulture,out float cd)||!float.IsFinite(cd)||cd<0||
+            !float.TryParse(p[2],NumberStyles.Float,CultureInfo.InvariantCulture,out float full)||!float.IsFinite(full)||full<0||
+            !int.TryParse(p[3],out int cost)||cost<0||!int.TryParse(p[4],out int uses)||uses<0||!int.TryParse(p[5],out int durability)||durability< -1)return;
+        card.CD=cd;card.fullCD=full;card.theSeedCost=cost;card.usedTimes=uses;card.Durability=durability;
+    }
+    static void PickUpUI(CardUI card)
+    {
+        if(!Live(card)||Mouse.Instance==null)return;var m=Mouse.Instance;
+        // Replay only the stock UI tail, not ClickOnCard's paid dispatch again.
+        if(Live(m.theCardOnMouse))m.theCardOnMouse.PutDown();m.ClearItemOnMouse(true);m.mouseItemType=(MouseItemType)1;
+        if(!card.PickUp())return;m.theCardOnMouse=card;m.thePlantTypeOnMouse=card.thePlantType;m.CreatePlantOnMouse(card.thePlantType);
     }
     static void Receive(string type,string payload)
     {
-        if(type=="sun_request"&&Party.IsHost&&Sync.Running){if(!int.TryParse(payload,out int token)||token<=0)return;if(hostLease!=0){Party.Send("sun_denied",token.ToString());return;}hostLease=token;deadline=DateTime.UtcNow.AddSeconds(8);Party.Send("sun_grant",token+"|"+Board.Instance.theSun+"|"+revision);}
-        else if(type=="sun_grant"&&!Party.IsHost){var p=payload.Split('|');if(p.Length!=3||!int.TryParse(p[0],out int token)||!int.TryParse(p[1],out int value)||!int.TryParse(p[2],out int rev))return;if(!Sync.Running||pending==null||token!=pendingToken){Party.Send("sun_commit",token+"|0");return;}SetClient(value,rev);var click=pending;pending=null;int before=Board.Instance.theSun;try{Execute(click);}finally{int delta=Board.Instance==null?0:Board.Instance.theSun-before;clientBalance=Board.Instance==null?before:Board.Instance.theSun;awaitingCommit=true;deadline=DateTime.UtcNow.AddSeconds(8);Party.Send("sun_commit",token+"|"+delta);}}
-        else if(type=="sun_commit"&&Party.IsHost&&Sync.Running){var p=payload.Split('|');if(p.Length!=2||!int.TryParse(p[0],out int token)||!int.TryParse(p[1],out int delta)||token!=hostLease)return;Apply(Add(Board.Instance.theSun,delta));hostLease=0;Publish(token);}
-        else if(type=="sun_balance"&&!Party.IsHost&&Sync.Running){var p=payload.Split('|');if(p.Length!=3||!int.TryParse(p[0],out int rev)||!int.TryParse(p[1],out int value)||!int.TryParse(p[2],out int completed))return;SetClient(value,rev);initialized=true;if(completed==pendingToken){awaitingCommit=false;pendingToken=0;}}
-        else if(type=="sun_denied"&&!Party.IsHost&&int.TryParse(payload,out int denied)&&denied==pendingToken){pending=null;awaitingCommit=false;pendingToken=0;Session.ShowToast("Another planting is finishing. Try again.",2);}
+        if(!Sync.Running||Board.Instance==null)return;
+        if(Party.IsHost)
+        {
+            int player=Party.SenderId;if(player<2||player>4)return;
+            if(type=="sun_request"&&PlantTransaction.TryRead(payload,out var request))Admit(player,request);
+            else if(type=="sun_place"&&PlantTransaction.TryRead(payload,out var placement))Place(player,placement);
+            else if(type=="sun_cancel"){var p=payload.Split('|');if(p.Length==2&&int.TryParse(p[0],out int token)&&Guid.TryParseExact(p[1],"N",out var op))Cancel(player,token,op);}
+            return;
+        }
+        if(Party.SenderId!=1)return;
+        if(type=="sun_balance")
+        {var p=payload.Split('|');if(p.Length==2&&long.TryParse(p[0],out long rev)&&rev>=0&&int.TryParse(p[1],out int balance)&&balance>=0){SetClient(balance,rev);initialized=true;}}
+        else if(type=="sun_grant")
+        {
+            var p=payload.Split('|');if(p.Length!=4||!int.TryParse(p[0],out int token)||!Guid.TryParseExact(p[1],"N",out var op)||!int.TryParse(p[2],out int balance)||balance<0||!long.TryParse(p[3],out long rev)||rev<0)return;
+            SetClient(balance,rev);if(pending==null||pending.Request.OperationId!=op||pending.Request.LeaseToken!=token)return;
+            if(Now>=pending.Deadline)pending.Cancel=true;pending.Granted=true;Retry();
+        }
+        else if(type=="sun_result")
+        {
+            int cut=payload.IndexOf('~');if(cut<0||!PlantTransactionResult.TryRead(payload[..cut],out var result))return;SetClient(result.Balance,result.BalanceRevision);
+            if(pending==null||pending.Request.OperationId!=result.OperationId)return;
+            var done=pending;pending=null;var card=LocalCard(done.Request.CardKey);ApplyCard(card,payload[(cut+1)..]);
+            if(result.Accepted)
+            {
+                if(result.Picked)PickUpUI(card);
+                else if(done.Request.Kind==0&&Mouse.Instance!=null&&Live(Mouse.Instance.theCardOnMouse)&&DeckSharing.Key(Mouse.Instance.theCardOnMouse)==done.Request.CardKey)
+                {Mouse.Instance.theCardOnMouse.PutDown();Mouse.Instance.ClearItemOnMouse(true);}
+            }
+            else Session.ShowToast("The host could not complete that card action. Try again.",3);
+        }
+        else if(type=="sun_fault"){faulted=true;Session.ShowToast("Planting could not be confirmed. Restart this level.",30);}
     }
     public static void Tick()
     {
-        if(!Sync.Running||Board.Instance==null)return;
-        if(!initialized)Start();
-        if((pending!=null||awaitingCommit||hostLease!=0)&&DateTime.UtcNow>deadline){Party.Leave();Session.ShowToast("Shared sun connection timed out. Return to menu and reconnect.",30);Time.timeScale=0;return;}
-        if(Party.IsHost){if(hostLease==0&&queuedHost!=null){var click=queuedHost;queuedHost=null;Execute(click);}if(hostLease==0&&Board.Instance.theSun!=published)Publish(0);}
-        else if(!replaying && Board.Instance.theSun!=clientBalance)Apply(clientBalance);
+        if(!Sync.Running||Board.Instance==null)return;if(!initialized)Start();
+        if(Party.IsHost)
+        {
+            if(faulted){if(!CoopPause.IsPaused)CoopPause.Request(true);return;}
+            HostPlanting.Tick();if(Board.Instance.theSun!=published)Publish();leases.Expire(Now);
+            foreach(var e in journal.Expire(Now,Math.Max(0,Board.Instance.theSun),revision)){leases.Cancel(e.Player,e.Token,e.Operation);Reply(e);}
+            if(leases.GrantNext(Now))
+            {if(journal.TryGet(leases.Owner,leases.Operation,out var e)&&journal.Grant(e,Now,leases.Expires))Grant(e);else leases.Complete(leases.Owner,leases.Token);}
+        }
+        else
+        {
+            if(pending!=null&&!faulted){if(Now>=pending.Deadline)pending.Cancel=true;if(Now>=pending.Retry)Retry();}
+            if(Board.Instance.theSun!=clientBalance)Apply(clientBalance);
+        }
         Sync.PartnerSun=Board.Instance.theSun;
     }
     public static int BeforeReplica()=>Board.Instance==null?0:Board.Instance.theSun;
