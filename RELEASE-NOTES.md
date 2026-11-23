@@ -1,23 +1,39 @@
 ## Українською
 
-P0 review-патч для **PvZ Fusion4.1**, а не нова версія Fusion. Внутрішній номер кооперативу0.12.13; протокол atomic-v2. Оновлено захист смертей від запізнілих пакетів та операцію посадки/спільного сонця. Перевірено рукавичку, Чомпера, мінні таймери, вибухи, HP/броню, ефекти, паузу/рестарт і нагороди у визначених сценаріях.
+**Мультиплеєрний мод для PvZ Fusion 4.1.** Захищайте спільне поле з друзями та проходьте звичайну кампанію разом.
 
-17 парних прогонів у12 сценаріях, дві копії на одному ПК; затримки200–800мс і коливання мережі. Повне проходження, всі рослини,4гравці та два фізичні ПК через інтернет не перевірені.
+- Спільні сонечка та розподіл карт, включно з додатковими копіями.
+- Імена напарників, перегляд їхніх карт із відкатами й позначки посадки.
+- Українська та англійська мови.
+- Підключення за IP і портом у локальній мережі або через Radmin VPN / ZeroTier One.
 
-**Завантажуйте ZIPпатча в Assets.** Це не повна гра: потрібні сумісна Fusion4.1, BepInEx IL2CPP та наявні залежності кооперативу. Закрийте гру, збережіть стару DLL і розпакуйте патч у папку гри. У всіх гравців має бути однакова DLL. Старі релізи несумісні. Мову English/Українська можна обрати в меню LANGUAGE; після зміни перезапустіть гру. Для віддаленої гри можна використовувати Radmin VPN або ZeroTier One.
+**Встановлення:** потрібна Fusion 4.1 з BepInEx IL2CPP і наявними залежностями кооперативу. Завантажте ZIP нижче, закрийте гру, збережіть стару DLL та розпакуйте архів у папку гри із заміною файлу. У всіх гравців має бути однакова збірка мода.
+
+**Як грати:** хост створює кімнату в КООП, гості вписують його LAN/VPN IPv4-адресу та порт (типово `27650`). Хост обирає рівень, усі обирають карти й натискають ГОТОВО.
+
+Мову можна змінити через **LANGUAGE → English / Українська** з перезапуском гри.
+
+Це **мод для гри**, а не повна гра чи нова версія Fusion. Старі збірки кооперативу несумісні з цим оновленням.
+
+[Докладна інструкція українською](https://github.com/dwdwqdwq/pvz-fusion-coop/blob/main/README.uk.md)
 
 ## English
 
-P0 review **co-op patch for PvZ Fusion4.1**, not a new Fusion release. Internal co-op version0.12.13; atomic-v2 protocol. Updates host-authoritative death/stale-packet protection and atomic planting/shared-sun handling. Bounded regression scenarios cover glove moves, Chomper, mine timers, explosions, HP/armor, effects, pause/restart and rewards.
+**Multiplayer co-op mod for PvZ Fusion 4.1.** Defend the same lawn with friends and play the normal campaign together.
 
-17 paired native runs across12 scenarios, two isolated copies on one PC; controlled200–800ms delays and jitter. Full campaign completion, all plants,4players and two physical internet PCs remain untested.
+- Shared sun and coordinated card selection, including extra card copies.
+- Teammate names, card previews with cooldowns and planting indicators.
+- English and Ukrainian interface.
+- Join by IP and port over LAN or Radmin VPN / ZeroTier One.
 
-**Download the patch ZIP from Assets.** Not a full game: requires compatible Fusion4.1, BepInEx IL2CPP and existing co-op dependencies. Close the game, back up the previous DLL and extract into the game directory. All players need the exact same DLL; older releases are incompatible. Choose English/Українська under LANGUAGE and restart. Radmin VPN or ZeroTier One can provide a virtual network for remote play.
+**Installation:** requires Fusion 4.1 with BepInEx IL2CPP and existing co-op dependencies. Download the ZIP below, close the game, back up the previous DLL and extract into the game folder, replacing the file. Every player needs the same mod build.
 
-## SHA-256
+**Play:** the host creates a CO-OP room; guests enter the host's LAN/VPN IPv4 address and port (default `27650`). The host selects a level, everyone chooses cards and presses READY.
 
-DLL: `c1d979503b688ae8ef5657dd7232f1d7aae503831eed54cad23c257c0acee68a`
+Change the language under **LANGUAGE → English / Українська**, then restart.
 
-Patch ZIP: `3ae545548f6bab248ca9607e63f26ee7596fe3f414d2ce82e1f5609bd0fa061b`
+This is a **game mod**, not the full game or a new Fusion release. Older co-op builds are incompatible with this update.
+
+[Full English instructions](https://github.com/dwdwqdwq/pvz-fusion-coop#readme)
 
 Developed with OpenAI Codex / Розроблено за допомогою OpenAI Codex.
